@@ -1,0 +1,33 @@
+extends ../layouts/main-layout.pug
+
+block head
+    link(rel='stylesheet', href='/css/main.css')
+    link(rel='stylesheet', href='/css/products.css')
+
+block content
+  main
+    if !itemCount || itemCount < 1 || products.length === 0
+      h1 Cart is empty
+    else
+      h1 Your Cart (#{itemCount})
+      .grid
+          each product in products
+            article.card.product-item
+              header.card__header
+                h1.product__title #{product.title}
+                .card__image
+                  img(src=product.imageUrl, alt=product.title)
+                .card__content
+                  h2.product__price $#{product.price} #{product.quantity > 1 ? 'x' + product.quantity : null}
+                  p.product__description #{product.description}
+                .card__actions
+                  a.btn(href=`/products/${product._id}`) Details
+                  form(action='/cart-delete-item' method='POST')
+                    input(type='hidden', name='_csrf' value=csrfToken)
+                    input(type='hidden', name='id', value=product._id)
+                    button.btn(type='submit') Remove From Cart
+
+      h3 Total Price: #{totalPrice}
+      form(action='/create-order', method='POST')
+        input(type='hidden', name='_csrf' value=csrfToken)
+        button.btn(type='submit') Order Now

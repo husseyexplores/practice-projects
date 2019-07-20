@@ -1,0 +1,23 @@
+if (errorFlash && errorFlash.length)
+  .flash-msg.error
+    ul
+      for err in errorFlash
+        li= err
+
+if (infoFlash && infoFlash.length)
+  .flash-msg.info
+    ul
+      for msg in infoFlash
+        li= msg
+
+if (warningFlash && warningFlash.length)
+  .flash-msg.warning
+    ul
+      for msg in warningFlash
+        li= msg
+
+if (successFlash && successFlash.length)
+  .flash-msg.success
+    ul
+      for msg in successFlash
+        li= msg

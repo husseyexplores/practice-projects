@@ -1,0 +1,21 @@
+extends ../layouts/main-layout.pug
+
+block head
+    link(rel='stylesheet', href='/css/main.css')
+    link(rel='stylesheet', href='/css/products.css')
+
+block content
+  main
+    if (!orders || !orders.length)
+      h1 No orders
+    else
+      h1 Your Orders (#{orders.length})
+      ul
+        for order in orders
+          li
+            h4 Order ##{order._id}
+            ul
+              for product in order.items
+                li
+                  a(href=`/products/${product._id}`) #{product.title} - (x#{product.quantity})
+            p Total: #{order.totalPrice}

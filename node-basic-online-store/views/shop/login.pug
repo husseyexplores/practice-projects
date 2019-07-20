@@ -1,0 +1,23 @@
+extends ../layouts/main-layout.pug
+
+block head
+    link(rel='stylesheet', href='/css/products.css')
+
+block content
+  main
+    h1.center-text Login with Email
+
+    include ../includes/flash-msgs.pug
+
+    form.login-form.centered-form(action='/login', method='POST')
+      input(type='hidden', name='_csrf' value=csrfToken)
+      .form-control
+        label(for='email') Email
+        input#email(type='text', name='email', placeholder='Email')
+
+      .form-control
+        label(for='password') Password
+        input#password(type='password', name='password', placeholder='Password')
+
+      button.btn(type='submit') Login
+      a(href='/password-reset') Forgot your password?

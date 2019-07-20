@@ -1,0 +1,28 @@
+extends ../layouts/main-layout.pug
+
+block head
+    link(rel='stylesheet', href='/css/main.css')
+    link(rel='stylesheet', href='/css/products.css')
+
+block content
+  main
+    if prods.length > 0
+      h1 My Products
+      .grid
+        each product in prods
+          article.card.product-item
+            header.card__header
+              h1.product__title #{product.title}
+              .card__image
+                img(src=product.imageUrl, alt=product.title)
+              .card__content
+                h2.product__price $#{product.price}
+                p.product__description #{product.description}
+              .card__actions
+                a(href=`/admin/edit-product/${product._id}`) Edit
+                form(action='/admin/delete-product' method='POST')
+                  input(type='hidden', name='_csrf' value=csrfToken)
+                  input(type='hidden', name='id', value=product._id)
+                  button.btn(type='submit') Delete
+    else
+      h1 No products

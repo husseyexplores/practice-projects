@@ -1,0 +1,27 @@
+extends ../layouts/main-layout.pug
+
+block head
+    link(rel='stylesheet', href='/css/main.css')
+    link(rel='stylesheet', href='/css/forms.css')
+
+block content
+  main
+    form.product-form(action='/admin/add-product', method='POST')
+      input(type='hidden', name='_csrf' value=csrfToken)
+      .form-control
+        label(for='title') Title
+        input#title(type='text', name='title', value='Book')
+
+      .form-control
+        label(for='imageUrl') Image URL
+        input#imageUrl(type='text', name='imageUrl', value='https://covers.oreillystatic.com/images/0636920032977/lrg.jpg')
+
+      .form-control
+        label(for='price') Price
+        input#price(type='number', name='price', step='1', value='1999')
+
+      .form-control
+        label(for='description') Description
+        textarea#description(rows='5', name='description') Cool book huh?
+
+      button(type='submit') Add Product

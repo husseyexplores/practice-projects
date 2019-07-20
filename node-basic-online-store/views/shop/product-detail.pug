@@ -1,0 +1,23 @@
+extends ../layouts/main-layout.pug
+
+block head
+    link(rel='stylesheet', href='/css/main.css')
+    link(rel='stylesheet', href='/css/products.css')
+
+block content
+  main
+    if !product || !product.title
+      h1 #{pageTitle}
+
+    if product && product.title
+      .grid
+        article.card.product-item
+          header.card__header
+            h1.product__title #{product.title}
+            .card__image
+              img(src=product.imageUrl, alt=product.title)
+            .card__content
+              h2.product__price $#{product.price}
+              p.product__description #{product.description}
+            .card__actions
+              include ../includes/add-to-cart-btn.pug

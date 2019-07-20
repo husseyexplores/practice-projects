@@ -1,0 +1,18 @@
+extends layouts/main-layout.pug
+
+block content
+  .inner.center-text
+    h4.fw-700 Status:
+      +space
+      span.fw-400 #{status}
+
+    h4.fw-700 Error Message:
+      +space
+      span.fw-400 #{message || 'Unknown'}
+
+    h4.fw-700 Error Reason:
+      +space
+      span.fw-400 #{reason || 'Unknown'}
+
+  if (stackHighlighted)
+    pre.error!= stackHighlighted

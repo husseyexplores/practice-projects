@@ -1,0 +1,26 @@
+extends ../layouts/main-layout.pug
+
+block head
+    link(rel='stylesheet', href='/css/products.css')
+
+block content
+  main
+    h1.center-text Signup
+
+    include ../includes/flash-msgs.pug
+
+    form.login-form.centered-form(action='/signup', method='POST')
+      input(type='hidden', name='_csrf' value=csrfToken)
+      .form-control
+        label(for='email') Email
+        input#email(type='text', name='email', placeholder='Email')
+
+      .form-control
+        label(for='password2') Password
+        input#password2(type='password', name='password', placeholder='Password')
+
+      .form-control
+        label(for='cofirmPassword') Confirm Password
+        input#cofirmPassword(type='password', name='confirmPassword', placeholder='Confirm Password')
+
+      button.btn(type='submit') Signup
