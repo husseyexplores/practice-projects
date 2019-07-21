@@ -3,6 +3,7 @@
     "wesbos"
   ],
   "rules": {
-    "no-plusplus": 0
+    "no-plusplus": 0,
+    "semi": "off",
   }
 }
