@@ -30,8 +30,8 @@ exports.getEditProduct = catchAsyncErr(async (req, res) => {
   // const product = await Product.findByPk(id)
   const product = await Product.findById(id)
 
-  if (!product) {
-    res.render('admin/edit-product', {
+  if (!product || product.userId.toString() !== req.user._id.toString()) {
+    return res.render('admin/edit-product', {
       pageTitle: 'Product Not Found',
       path: '/admin/edit-product',
       product: null,
@@ -50,7 +50,7 @@ exports.postEditProduct = catchAsyncErr(async (req, res) => {
 
   const product = await Product.findById(id)
 
-  if (!product) {
+  if (!product || product.userId.toString() !== req.user._id.toString()) {
     throwErr(
       'Could not updated the product',
       `Product with id ${id} not found`,
@@ -72,7 +72,7 @@ exports.postDeleteProduct = catchAsyncErr(async (req, res) => {
   const { id } = req.body
   const product = await Product.findById(id)
 
-  if (!product) {
+  if (!product || product.userId.toString() !== req.user._id.toString()) {
     throwErr(
       'Could not delete the product',
       `Product with id ${id} not found`,
@@ -80,13 +80,13 @@ exports.postDeleteProduct = catchAsyncErr(async (req, res) => {
     )
   }
 
-  await Product.findOneAndRemove({ _id: id })
+  await Product.findOneAndRemove({ _id: id, userId: req.user._id })
 
   res.redirect('/admin/products')
 })
 
 exports.getProducts = catchAsyncErr(async (req, res) => {
-  const products = await Product.find()
+  const products = await Product.find({ userId: req.user.id })
 
   res.render('admin/products', {
     pageTitle: 'Admin Products',
