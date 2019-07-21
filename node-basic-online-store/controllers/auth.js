@@ -157,6 +157,7 @@ exports.postNewPassword = catchAsyncErr(async (req, res) => {
     resetToken,
     resetTokenExpiry: { $gt: Date.now() },
   })
+
   if (!user) {
     req.flash(
       'error',
@@ -172,6 +173,8 @@ exports.postNewPassword = catchAsyncErr(async (req, res) => {
 
   const hashedPassword = await hash(password, 12)
   user.password = hashedPassword
+  user.resetToken = null
+  user.resetTokenExpiry = undefined
   await user.save()
 
   req.flash('success', 'Password successfully updated')
