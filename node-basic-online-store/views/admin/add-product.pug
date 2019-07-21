@@ -6,22 +6,24 @@ block head
 
 block content
   main
+    include ../includes/flash-msgs.pug
+
     form.product-form(action='/admin/add-product', method='POST')
       input(type='hidden', name='_csrf' value=csrfToken)
-      .form-control
+      .form-control(class=validationErrors && validationErrors.title && 'error')
         label(for='title') Title
-        input#title(type='text', name='title', value='Book')
+        input#title(type='text', name='title', value=title)
 
-      .form-control
+      .form-control(class=validationErrors && validationErrors.imageUrl && 'error')
         label(for='imageUrl') Image URL
-        input#imageUrl(type='text', name='imageUrl', value='https://covers.oreillystatic.com/images/0636920032977/lrg.jpg')
+        input#imageUrl(type='text', name='imageUrl', value=imageUrl)
 
-      .form-control
+      .form-control(class=validationErrors && validationErrors.price && 'error')
         label(for='price') Price
-        input#price(type='number', name='price', step='1', value='1999')
+        input#price(type='number', name='price', step='1', value=price)
 
-      .form-control
+      .form-control(class=validationErrors && validationErrors.description && 'error')
         label(for='description') Description
-        textarea#description(rows='5', name='description') Cool book huh?
+        textarea#description(rows='5', name='description') #{description}
 
       button(type='submit') Add Product

@@ -1,4 +1,5 @@
 const { hash, compare } = require('bcryptjs')
+const { validationResult } = require('express-validator')
 const User = require('../models/User')
 const { catchAsyncErr } = require('../handlers/errorHandlers')
 const { mailer, createRandomToken } = require('../utils/helpers')
@@ -13,24 +14,21 @@ exports.getSignup = (req, res) => {
 }
 
 exports.postSignup = catchAsyncErr(async (req, res) => {
-  let hasErr = false
-  const { email, password, confirmPassword } = req.body
+  const errors = validationResult(req)
+  const { email, password } = req.body
 
-  const existingUser = await User.findOne({ email })
-  if (existingUser) {
-    req.flash(
-      'error',
-      `User with email ${email} already exist. Please use a different email`
-    )
-    hasErr = true
+  if (!errors.isEmpty()) {
+    const errorMsgs = [...new Set(errors.array().map(({ msg }) => msg))]
+    // 422 validation error
+    return res.status(422).render('shop/signup', {
+      pageTitle: 'Signup',
+      path: '/signup',
+      errorFlash: errorMsgs,
+      email,
+      password,
+      validationErrors: errors.mapped(),
+    })
   }
-
-  if (password !== confirmPassword) {
-    req.flash('error', 'Passwords do not match')
-    hasErr = true
-  }
-
-  if (hasErr) return res.redirect('/signup')
 
   const hashedPassword = await hash(password, 12)
 
@@ -64,7 +62,21 @@ exports.getLogin = (req, res) => {
 }
 
 exports.postLogin = catchAsyncErr(async (req, res) => {
+  const errors = validationResult(req)
   const { email, password } = req.body
+
+  if (!errors.isEmpty()) {
+    const errorMsgs = [...new Set(errors.array().map(({ msg }) => msg))]
+    console.log(errors.mapped())
+    // 422 validation error
+    return res.status(422).render('shop/login', {
+      pageTitle: 'Login',
+      path: '/login',
+      errorFlash: errorMsgs,
+      email,
+      validationErrors: errors.mapped(),
+    })
+  }
 
   const user = await User.findOne({ email })
   let pwMatched = false
@@ -74,8 +86,16 @@ exports.postLogin = catchAsyncErr(async (req, res) => {
   }
 
   if (!user || !pwMatched) {
-    req.flash('error', 'Invalid email or password')
-    return res.redirect('/login')
+    return res.status(422).render('shop/login', {
+      pageTitle: 'Login',
+      path: '/login',
+      errorFlash: ['Invalid Email or password'],
+      email,
+      validationErrors: {
+        email: true,
+        password: true,
+      },
+    })
   }
 
   req.session.isAuthenticated = true // Shared accross multiple requests

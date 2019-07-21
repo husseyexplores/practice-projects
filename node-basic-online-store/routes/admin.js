@@ -8,14 +8,18 @@ const {
   getProducts,
 } = require('../controllers/admin')
 const isAuth = require('../middleware/isAuth')
+const {
+  addProductValidators,
+  editProductValidators,
+} = require('../validators/admin')
 
 // //////////////////////////////////////////////////////////////////////
 
 router.get('/add-product', isAuth, getAddProduct)
-router.post('/add-product', isAuth, postAddProduct)
+router.post('/add-product', isAuth, addProductValidators, postAddProduct)
 
 router.get('/edit-product/:id', isAuth, getEditProduct)
-router.post('/edit-product', isAuth, postEditProduct)
+router.post('/edit-product', isAuth, editProductValidators, postEditProduct)
 
 router.post('/delete-product', isAuth, postDeleteProduct)
 

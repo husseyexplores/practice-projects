@@ -6,27 +6,28 @@ block head
 
 block content
   main
-  if product
-    form.product-form(action='/admin/edit-product', method='POST')
-      input(type='hidden', name='_csrf' value=csrfToken)
-      .form-control
+    include ../includes/flash-msgs.pug
+    if !product
+      h1 Product Not Found
+    else
+      form.product-form(action='/admin/edit-product', method='POST')
+        input(type='hidden', name='_csrf' value=csrfToken)
         input#title(type='hidden', name='id', value=product._id)
 
-        label(for='title') Title
-        input#title(type='text', name='title', value=product.title)
+        .form-control(class=validationErrors && validationErrors.title && 'error')
+          label(for='title') Title
+          input#title(type='text', name='title', value=product.title)
 
-      .form-control
-        label(for='imageUrl') Image URL
-        input#imageUrl(type='text', name='imageUrl', value=product.imageUrl)
+        .form-control(class=validationErrors && validationErrors.imageUrl && 'error')
+          label(for='imageUrl') Image URL
+          input#imageUrl(type='text', name='imageUrl', value=product.imageUrl)
 
-      .form-control
-        label(for='price') Price
-        input#price(type='number', name='price', step='1', value=product.price)
+        .form-control(class=validationErrors && validationErrors.price && 'error')
+          label(for='price') Price
+          input#price(type='number', name='price', step='1', value=product.price)
 
-      .form-control
-        label(for='description') Description
-        textarea#description(rows='5', name='description') #{product.description}
+        .form-control(class=validationErrors && validationErrors.description && 'error')
+          label(for='description') Description
+          textarea#description(rows='5', name='description') #{product.description}
 
-      button(type='submit') Update Product
-  else
-    h1 Product Not Found
+        button(type='submit') Update Product

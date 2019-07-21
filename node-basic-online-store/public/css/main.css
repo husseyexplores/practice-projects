@@ -27,6 +27,14 @@ form input {
   transition: .15s all;
 }
 
+input.error {
+  border: 2px solid #f9aeae;
+}
+
+.form-control.error input {
+  border: 2px solid #f9aeae;
+}
+
 form input:focus,
 form input:active {
   border: 1px solid #00695c;

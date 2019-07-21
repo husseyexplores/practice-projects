@@ -8,16 +8,15 @@ block content
     h1.center-text Signup
 
     include ../includes/flash-msgs.pug
-
     form.login-form.centered-form(action='/signup', method='POST')
       input(type='hidden', name='_csrf' value=csrfToken)
-      .form-control
+      .form-control(class=validationErrors && validationErrors.email && 'error')
         label(for='email') Email
-        input#email(type='text', name='email', placeholder='Email')
+        input#email(type='text', name='email', placeholder='Email', value=email)
 
-      .form-control
+      .form-control(class=validationErrors && validationErrors.password && 'error')
         label(for='password2') Password
-        input#password2(type='password', name='password', placeholder='Password')
+        input#password2(type='password', name='password', placeholder='Password', value=password)
 
       .form-control
         label(for='cofirmPassword') Confirm Password
