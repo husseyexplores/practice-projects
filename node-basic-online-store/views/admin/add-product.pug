@@ -1,29 +1,48 @@
 extends ../layouts/main-layout.pug
 
 block head
-    link(rel='stylesheet', href='/css/main.css')
-    link(rel='stylesheet', href='/css/forms.css')
 
 block content
   main
     include ../includes/flash-msgs.pug
 
-    form.product-form(action='/admin/add-product', method='POST')
-      input(type='hidden', name='_csrf' value=csrfToken)
-      .form-control(class=validationErrors && validationErrors.title && 'error')
-        label(for='title') Title
-        input#title(type='text', name='title', value=title)
+    if typeof validationErrors === 'undefined'
+      - validationErrors = {}
+    if !isEditting
+      - product = {}
 
-      .form-control(class=validationErrors && validationErrors.imageUrl && 'error')
-        label(for='imageUrl') Image URL
-        input#imageUrl(type='text', name='imageUrl', value=imageUrl)
+    if isEditting && !product
+      h1 Product Not Found
 
-      .form-control(class=validationErrors && validationErrors.price && 'error')
-        label(for='price') Price
-        input#price(type='number', name='price', step='1', value=price)
+    else
+      div(class='w-full max-w-lg mx-auto')
+        form(class='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-4', action=isEditting ? '/admin/edit-product' : '/admin/add-product', method='POST')
+          if isEditting
+            input#title(type='hidden', name='id', value=product._id)
+          input(type='hidden', name='_csrf' value=csrfToken)
 
-      .form-control(class=validationErrors && validationErrors.description && 'error')
-        label(for='description') Description
-        textarea#description(rows='5', name='description') #{description}
+          .mb-5
+            label(class='block form-label', for='title') Title
+            input#title(class='form-input', class=validationErrors.title && 'error-input', type='text', name='title', value=product.title)
 
-      button(type='submit') Add Product
+          .mb-5.flex.flex-wrap
+            .div(class='w-full sm:w-1/2')
+              label(class='block form-label', for='image') Image
+              label(class='form-file-upload', class=validationErrors.title && 'error-input', for='image', tabindex='0')
+                svg.w-8.h-8(fill='currentColor', xmlns='http://www.w3.org/2000/svg', viewBox='0 0 20 20')
+                  path(d='M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z')
+                span.mt-2.text-base.leading-normal.text-gray-600= isEditting ? 'Change Image' : 'Select Image'
+                input#image.hidden(type='file')
+            if product.imageUrl
+              .div(class='w-full sm:w-1/2 mt-5 sm:mt-0')
+                img(class='h-auto w-24', src=product.imageUrl, alt=product.title)
+
+          .mb-5
+            label(class='block form-label', for='price') Price
+            input#price(class='form-input appearance-text', class=validationErrors.price && 'error-input', type='number', name='price', step='1', value=product.price)
+
+          .mb-5
+            label(class='block form-label', for='description') Description
+            textarea#description(class='form-input', class=validationErrors.description && 'error-input', rows='5', name='description') #{product.description}
+
+          button(class='btn bg-purple-500 shadow-lg hover:bg-purple-400 text-white border-0', type='submit')= isEditting ? 'Save Changes' : 'Add Product'

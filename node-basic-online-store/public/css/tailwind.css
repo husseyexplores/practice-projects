@@ -2,7 +2,8 @@
 @taiwind components;
 
 .btn {
-  @apply inline-block px-5 py-3 rounded-lg uppercase tracking-wider font-semibold text-sm;
+  @apply inline-block px-5 py-3 rounded uppercase tracking-wider font-semibold text-sm;
+  transition: all .1s;
 }
 
 .btn:focus {
@@ -31,6 +32,43 @@
 
 .btn-secondary:active {
   @apply bg-gray-500;
+}
+
+/* Labels */
+.form-label {
+  @apply text-gray-600 text-sm font-bold mb-2;
+}
+
+/* Inputs */
+.form-input {
+  @apply bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight;
+  transition: all .1s;
+}
+
+.form-input:focus {
+  @apply outline-none bg-white border-purple-600;
+}
+
+/* File upload */
+.form-file-upload {
+  @apply w-48 flex flex-col outline-none items-center px-2 py-4 rounded-lg tracking-wide cursor-pointer bg-gray-200 border-2 border-gray-200 text-gray-600;
+}
+
+.form-file-upload:hover,
+.form-file-upload:focus,
+.form-file-upload:active {
+  @apply border-purple-500 bg-white text-purple-500;
+}
+
+/* States (error, success etc) */
+.error-input {
+  @apply border-red-400 border-2;
+}
+
+
+/* Custom Utilities */
+.appearance-text {
+  appearance: textfield;
 }
 
 @tailwind utilities;

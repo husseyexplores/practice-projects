@@ -15,18 +15,6 @@ main {
   margin: auto;
 }
 
-form {
-  display: inline;
-}
-
-form input {
-  display: block;
-  border: 1px solid #a6a6a6;
-  border-radius: 2px;
-  padding: 7px 010px;
-  transition: .15s all;
-}
-
 input.error {
   border: 2px solid #f9aeae;
 }
@@ -35,27 +23,8 @@ input.error {
   border: 2px solid #f9aeae;
 }
 
-form input:focus,
-form input:active {
-  border: 1px solid #00695c;
-}
-
 form .form-control:not(:last-child) {
   margin-bottom: 20px;
-}
-
-.centered-form {
-  display: block;
-  margin: 0 auto;
-  max-width: 300px;
-}
-
-.centered-form input,
-.centered-form button {
-  width: 100%;
-}
-.center-text {
-  text-align: center;
 }
 
 .fw-400 {
@@ -108,13 +77,14 @@ form .form-control:not(:last-child) {
   border: none;
 }
 
+
 .main-header__item a:hover,
 .main-header__item a:active,
-.main-header__item button.active,
+.main-header__item a.active,
 .main-header__item button:hover,
 .main-header__item button:active,
 .main-header__item button.active {
-  color: #ffeb3b;
+  color: #ffeb3b !important;
 }
 
 .mobile-nav {
@@ -233,24 +203,6 @@ form .form-control:not(:last-child) {
 .card__actions button,
 .card__actions a {
   margin: 0 0.25rem;
-}
-
-.btn {
-  display: inline-block;
-  padding: 0.25rem 1rem;
-  text-decoration: none;
-  font: inherit;
-  border: 1px solid #00695c;
-  color: #00695c;
-  background: white;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.btn:hover,
-.btn:active {
-  background-color: #00695c;
-  color: white;
 }
 
 @media (min-width: 768px) {

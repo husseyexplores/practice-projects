@@ -8,6 +8,7 @@ exports.getAddProduct = (req, res) => {
   res.render('admin/add-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
+    isEditting: false,
   })
 }
 
@@ -20,12 +21,10 @@ exports.postAddProduct = catchAsyncErr(async (req, res) => {
     return res.status(422).render('admin/add-product', {
       pageTitle: 'Add Product',
       path: '/admin/add-product',
-      title,
-      imageUrl,
-      description,
-      price,
+      product: { title, imageUrl, description, price },
       errorFlash: errMsgs,
       validationErrors: errors.mapped(),
+      isEditting: false,
     })
   }
 
@@ -48,17 +47,19 @@ exports.getEditProduct = catchAsyncErr(async (req, res) => {
   const product = await Product.findById(id)
 
   if (!product || product.userId.toString() !== req.user._id.toString()) {
-    return res.render('admin/edit-product', {
+    return res.render('admin/add-product', {
       pageTitle: 'Product Not Found',
       path: '/admin/edit-product',
       product: null,
+      isEditting: false,
     })
   }
 
-  res.render('admin/edit-product', {
+  res.render('admin/add-product', {
     pageTitle: 'Edit Product',
     path: '/admin/edit-product',
     product,
+    isEditting: true,
   })
 })
 
@@ -78,7 +79,7 @@ exports.postEditProduct = catchAsyncErr(async (req, res) => {
 
   if (!errors.isEmpty()) {
     const errMsgs = [...new Set(errors.array().map(({ msg }) => msg))]
-    return res.status(422).render('admin/edit-product', {
+    return res.status(422).render('admin/add-product', {
       pageTitle: 'Edit Product',
       path: '/admin/edit-product',
       product: {
@@ -90,6 +91,7 @@ exports.postEditProduct = catchAsyncErr(async (req, res) => {
       },
       errorFlash: errMsgs,
       validationErrors: errors.mapped(),
+      isEditting: true,
     })
   }
 
