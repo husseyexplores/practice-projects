@@ -38,6 +38,7 @@ app.use((req, res, next) => {
   res.locals.h = res.locals.h || {}
   res.locals.h.dump = helpers.dump
   res.locals.csrfToken = req.csrfToken()
+  res.locals.NODE_ENV = NODE_ENV
   res.locals.infoFlash = req.flash('info')
   res.locals.successFlash = req.flash('success')
   res.locals.warningFlash = req.flash('warning')
