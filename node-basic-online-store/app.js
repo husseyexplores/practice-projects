@@ -48,11 +48,14 @@ app.use((req, res, next) => {
 
   User.findOne({ _id: userId })
     .then(user => {
+      if (!user) return next()
       res.locals.isAuthenticated = req.session.isAuthenticated
       req.user = user
       next()
     })
-    .catch(next)
+    .catch(e => {
+      throw new Error(e)
+    })
 })
 
 app.use(authRoutes)
