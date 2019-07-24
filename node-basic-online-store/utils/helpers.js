@@ -1,4 +1,5 @@
 const path = require('path')
+const fs = require('fs')
 const crypto = require('crypto')
 const { createTransport } = require('nodemailer')
 const sgTransport = require('nodemailer-sendgrid-transport')
@@ -48,3 +49,5 @@ exports.createRandomToken = (byteLength = 32) =>
       resolve(token)
     })
   })
+
+exports.deleteFile = filePath => fs.unlink(filePath, err => err)

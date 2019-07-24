@@ -1,7 +1,9 @@
+const path = require('path')
 const { validationResult } = require('express-validator')
-const { throwErr } = require('../utils/helpers')
+const { throwErr, deleteFile } = require('../utils/helpers')
 const { catchAsyncErr } = require('../handlers/errorHandlers')
 const Product = require('../models/Product')
+
 // //////////////////////////////////////////////////////////////////////
 
 exports.getAddProduct = (req, res) => {
@@ -14,17 +16,24 @@ exports.getAddProduct = (req, res) => {
 
 exports.postAddProduct = catchAsyncErr(async (req, res) => {
   const errors = validationResult(req)
-  const { title, imageUrl, description, price } = req.body
+  const { title, description, price } = req.body
+  let imageUrl
+  if (req.file && req.file.filename) {
+    imageUrl = `/${req.file.filename}`
+  }
 
-  if (!errors.isEmpty()) {
-    const errMsgs = [...new Set(errors.array().map(({ msg }) => msg))]
+  const errMsgs = [...new Set(errors.array().map(({ msg }) => msg))].concat(
+    req.errors
+  )
+  if (errMsgs.length) {
     return res.status(422).render('admin/add-product', {
       pageTitle: 'Add Product',
       path: '/admin/add-product',
-      product: { title, imageUrl, description, price },
+      product: { title, description, imageUrl, price },
       errorFlash: errMsgs,
       validationErrors: errors.mapped(),
       isEditting: false,
+      retainInput: true,
     })
   }
 
@@ -32,8 +41,8 @@ exports.postAddProduct = catchAsyncErr(async (req, res) => {
     userId: req.user._id,
     title,
     description,
-    price,
     imageUrl,
+    price,
   })
 
   await product.save()
@@ -65,7 +74,14 @@ exports.getEditProduct = catchAsyncErr(async (req, res) => {
 
 exports.postEditProduct = catchAsyncErr(async (req, res) => {
   const { product } = req
-  const { title, imageUrl, description, price, id } = req.body
+  const { title, description, price, id } = req.body
+  let { imageUrl } = req.body
+
+  if (req.file && req.file.filename) {
+    const oldImagePath = path.join(req.rootDir, 'uploads', 'images', imageUrl)
+    deleteFile(oldImagePath)
+    imageUrl = `/${req.file.filename}`
+  }
 
   if (!product) {
     throwErr(
@@ -77,8 +93,11 @@ exports.postEditProduct = catchAsyncErr(async (req, res) => {
 
   const errors = validationResult(req)
 
-  if (!errors.isEmpty()) {
-    const errMsgs = [...new Set(errors.array().map(({ msg }) => msg))]
+  const errMsgs = [...new Set(errors.array().map(({ msg }) => msg))].concat(
+    req.errors
+  )
+
+  if (errMsgs.length) {
     return res.status(422).render('admin/add-product', {
       pageTitle: 'Edit Product',
       path: '/admin/edit-product',
@@ -116,6 +135,14 @@ exports.postDeleteProduct = catchAsyncErr(async (req, res) => {
       404
     )
   }
+
+  const oldImagePath = path.join(
+    req.rootDir,
+    'uploads',
+    'images',
+    product.imageUrl
+  )
+  deleteFile(oldImagePath)
 
   await Product.findOneAndRemove({ _id: id, userId: req.user._id })
 

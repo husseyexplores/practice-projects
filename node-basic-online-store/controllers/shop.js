@@ -1,3 +1,7 @@
+const fs = require('fs')
+const path = require('path')
+const PDFDoc = require('pdfkit')
+const { validationResult } = require('express-validator')
 const { catchAsyncErr } = require('../handlers/errorHandlers')
 const { throwErr } = require('../utils/helpers')
 const Product = require('../models/Product')
@@ -102,6 +106,46 @@ exports.getOrders = catchAsyncErr(async (req, res) => {
     path: '/orders',
     orders,
   })
+})
+
+exports.getInvoice = catchAsyncErr(async (req, res, next) => {
+  const errors = validationResult(req)
+  const errMsgs = [...new Set(errors.array().map(({ msg }) => msg))]
+  if (!errors.isEmpty()) {
+    req.flash('error', errMsgs)
+    return res.redirect('/')
+  }
+
+  const { orderId } = req.params
+  const order = await req.user.getOrder(orderId)
+  if (!order) {
+    req.flash('error', 'Order not found')
+    return res.redirect('/')
+  }
+
+  res.setHeader('Content-Type', 'application/pdf')
+  res.setHeader(
+    'Content-Disposition',
+    `inline; filename="invoice-${orderId}.pdf"`
+  )
+
+  const pdf = new PDFDoc()
+  pdf.pipe(res)
+  pdf.fontSize(18).text('Invoice', { underline: true })
+  pdf.fontSize(12)
+  pdf.text(`Order#${orderId}`)
+  pdf.fontSize(12)
+  pdf.text(`-------------------------------------------------------`)
+  pdf.text(' ')
+
+  pdf.text(`Product Name - Qauntity - Unit Price`)
+  order.items.forEach(({ title, price, quantity }) => {
+    pdf.text(`${title} - x${quantity} - $${price}`)
+  })
+  pdf.text(' ')
+  pdf.text(`Total: $${order.totalPrice}`)
+
+  pdf.end()
 })
 
 exports.getCheckout = (req, res) => {

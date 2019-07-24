@@ -22,7 +22,10 @@ const csrfProtection = csrf()
 
 app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'uploads', 'images')))
+
 app.use(bodyParser.urlencoded({ extended: false }))
+
 app.use(
   session({
     secret: 'A very dumb secret value',
@@ -35,6 +38,8 @@ app.use(csrfProtection)
 app.use(flash())
 
 app.use((req, res, next) => {
+  req.errors = []
+  req.rootDir = __dirname
   res.locals.h = res.locals.h || {}
   res.locals.h.dump = helpers.dump
   res.locals.csrfToken = req.csrfToken()
@@ -67,7 +72,7 @@ app.use(shopRoutes)
 app.use(errorHandlers.notFound)
 
 // One of our error handlers will see if these errors are just validation errors
-// app.use(errorHandlers.flashValidationErrors)
+app.use(errorHandlers.flashValidationErrors)
 
 // Otherwise this was a really bad error we didn't expect! Shoot eh
 if (NODE_ENV === 'production') {

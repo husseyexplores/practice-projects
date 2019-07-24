@@ -144,6 +144,10 @@ userSchema.methods.getOrders = function getOrders() {
   return Order.find({ userId: this._id })
 }
 
+userSchema.methods.getOrder = function getOrder(orderId) {
+  return Order.findOne({ _id: orderId, userId: this._id })
+}
+
 const User = model('User', userSchema)
 module.exports = User
 

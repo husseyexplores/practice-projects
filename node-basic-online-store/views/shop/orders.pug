@@ -13,7 +13,8 @@ block content
       ul
         for order in orders
           li
-            h4 Order ##{order._id}
+            h4 Order ##{order._id} -
+              a(href=`/orders/${order._id}`)  Invoice
             ul
               for product in order.items
                 li

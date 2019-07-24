@@ -11,15 +11,16 @@ block content
     if !isEditting && !retainInput
       - product = {}
 
+    - formAction = (isEditting ? '/admin/edit-product' : '/admin/add-product') + `?_csrf=${csrfToken}`
+
     if isEditting && !product
       h1 Product Not Found
 
     else
       div(class='w-full max-w-lg mx-auto')
-        form(class='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-4', action=isEditting ? '/admin/edit-product' : '/admin/add-product', method='POST', enctype='multipart/form-data')
+        form(class='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-4', action=formAction, method='POST', enctype='multipart/form-data')
           if isEditting
-            input#title(type='hidden', name='id', value=product._id)
-          input(type='hidden', name='_csrf' value=csrfToken)
+            input(type='hidden', name='id', value=product._id)
 
           .mb-5
             label(class='block form-label', for='title') Title
@@ -28,13 +29,14 @@ block content
           .mb-5.flex.flex-wrap
             .div(class='w-full sm:w-1/2')
               label(class='block form-label', for='image') Image
-              label(class='form-file-upload', class=validationErrors.title && 'error-input', for='image', tabindex='0')
+              label(class='form-file-upload', class=validationErrors.image && 'error-input', for='image', tabindex='0')
                 svg.w-8.h-8(fill='currentColor', xmlns='http://www.w3.org/2000/svg', viewBox='0 0 20 20')
                   path(d='M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z')
                 span.mt-2.text-base.leading-normal.text-gray-600= isEditting ? 'Change Image' : 'Select Image'
-                input#image.hidden(type='file')
+                input#image.hidden(type='file', name='image')
             if product.imageUrl
               .div(class='w-full sm:w-1/2 mt-5 sm:mt-0')
+                input(type='hidden', name='imageUrl', value=product.imageUrl)
                 img(class='h-auto w-24', src=product.imageUrl, alt=product.title)
 
           .mb-5

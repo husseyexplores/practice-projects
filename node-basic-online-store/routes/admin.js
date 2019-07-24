@@ -8,18 +8,28 @@ const {
   getProducts,
 } = require('../controllers/admin')
 const isAuth = require('../middleware/isAuth')
+const { productImageHandler } = require('../middleware/multer')
 const {
   addProductValidators,
   editProductValidators,
+  productShouldContainImg,
 } = require('../validators/admin')
 
 // //////////////////////////////////////////////////////////////////////
 
 router.get('/add-product', isAuth, getAddProduct)
-router.post('/add-product', isAuth, addProductValidators, postAddProduct)
+router.post(
+  '/add-product',
+  [isAuth, productImageHandler, addProductValidators, productShouldContainImg],
+  postAddProduct
+)
 
 router.get('/edit-product/:id', isAuth, getEditProduct)
-router.post('/edit-product', isAuth, editProductValidators, postEditProduct)
+router.post(
+  '/edit-product',
+  [isAuth, productImageHandler, editProductValidators],
+  postEditProduct
+)
 
 router.post('/delete-product', isAuth, postDeleteProduct)
 
