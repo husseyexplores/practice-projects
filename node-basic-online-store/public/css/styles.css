@@ -725,6 +725,10 @@ video {
           appearance: textfield;
 }
 
+.error-outline {
+  box-shadow: 0 0 0 3px rgba(225, 66, 66, 0.5);
+}
+
 .appearance-none {
   -webkit-appearance: none;
      -moz-appearance: none;

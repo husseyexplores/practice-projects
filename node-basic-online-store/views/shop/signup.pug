@@ -4,22 +4,33 @@ block head
     link(rel='stylesheet', href='/css/products.css')
 
 block content
-  main
-    h1.center-text Signup
+  main(class='min-h-screen flex-wrap')
 
-    include ../includes/flash-msgs.pug
-    form.login-form.centered-form(action='/signup', method='POST')
-      input(type='hidden', name='_csrf' value=csrfToken)
-      .form-control(class=validationErrors && validationErrors.email && 'error')
-        label(for='email') Email
-        input#email(type='text', name='email', placeholder='Email', value=email)
+    if typeof validationErrors === 'undefined'
+      - validationErrors = {}
 
-      .form-control(class=validationErrors && validationErrors.password && 'error')
-        label(for='password2') Password
-        input#password2(type='password', name='password', placeholder='Password', value=password)
+    div(class='mb-6 max-w-md mx-auto')
+      include ../includes/flash-msgs.pug
 
-      .form-control
-        label(for='cofirmPassword') Confirm Password
-        input#cofirmPassword(type='password', name='confirmPassword', placeholder='Confirm Password')
+    div(class='shadow-md px-8 py-5 rounded-sm max-w-md mx-auto w-full bg-white')
+      h1(class='text-3xl font-bold text-center text-gray-800') Sign Up
 
-      button.btn(type='submit') Signup
+      div(class='mt-6 py-4')
+        form(class='w-full', action='/signup', method='POST')
+          input(type='hidden', name='_csrf' value=csrfToken)
+          div(class='w-full mb-4 border rounded border-b-0')
+            input#email(class='w-full block border-b-2 rounded px-3 py-2 text-gray-600 focus:outline-none focus:border-gray-600', autofocus='true', type='text', name='email', placeholder='Email', value=email)
+
+          div(class='w-full mb-4 border rounded border-b-0')
+            input#password2(class='w-full block border-b-2 rounded px-3 py-2 text-gray-600 focus:outline-none focus:border-gray-600',
+            type='password', name='password', placeholder='Password', value=password)
+
+          div(class='w-full border rounded border-b-0')
+            input#cofirmPassword(class='w-full block border-b-2 rounded px-3 py-2 text-gray-600 focus:outline-none  focus:border-gray-600', type='password', name='confirmPassword', placeholder='Confirm Password')
+
+          button.btn(class='bg-green-500 text-white w-full mt-4 font-semibold', type='submit') Create Account
+
+    div(class='mt-6 w-full text-center')
+      span(class='text-gray-500') Already have an account?&nbsp;
+      a(class='underline hover:text-green-500 tracking', href='/login') Log in
+      | .
