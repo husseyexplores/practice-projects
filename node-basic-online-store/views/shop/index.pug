@@ -8,19 +8,19 @@ block content
   main
     include ../includes/flash-msgs.pug
     if prods.length > 0
-      h1 My Products
-      .grid
+      h1(class='text-3xl font-semibold mt-4 mb-8 text-center text-gray-900 tracking-wider uppercase underline') Homepage
+
+      div(class='flex flex-wrap max-w-full')
         each product in prods
-          article.card.product-item
-            header.card__header
-              h1.product__title #{product.title}
-              .card__image
-                img(src=product.imageUrl, alt=product.title)
-              .card__content
-                h2.product__price $#{product.price}
-                p.product__description #{product.description}
-              .card__actions
-                a.btn(href=`/products/${product._id}`) Details
+          figure(class='w-1/2 md:w-1/3 px-4 text-center mb-12 flex justify-center')
+            div
+              a(class='block focus:outline-none active:outline-none', href=`/products/${product._id}`)
+                img(class='h-56 sm:h-64 md:h-80 lg:h-96 object-cover w-full', src=product.imageUrl, alt=product.title)
+              h3(class='text-lg mt-4 leading-tight')
+                a(class='uppercase text-base tracking-wider font-semibold', href=`/products/${product._id}`) #{product.title}
+              div(class='mt-1')
+                span(class='text-base text-gray-600') $#{product.price}
+              div
                 include ../includes/add-to-cart-btn.pug
     else
       h1 No products

@@ -7,9 +7,9 @@ block head
 block content
   main
     if !itemCount || itemCount < 1 || products.length === 0
-      h1 Cart is empty
+      h1(class='text-3xl font-semibold mt-4 mb-8 text-center text-gray-900 tracking-wider uppercase underline') Cart is Empty
     else
-      h1 Your Cart (#{itemCount})
+      h1(class='text-3xl font-semibold mt-4 mb-8 text-center text-gray-900 tracking-wider uppercase underline') Your Cart (#{itemCount})
       .grid
           each product in products
             article.card.product-item
