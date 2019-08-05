@@ -19,12 +19,12 @@ block content
                 a(class='uppercase text-base tracking-wider font-semibold', href=`/products/${product._id}`) #{product.title}
               div(class='mt-1')
                 span(class='text-base text-gray-600') $#{product.price}
-              div
-                a(class='inline-block mt-4 bg-transparent hover:bg-purple-500 text-purple-500 font-semibold hover:text-white py-1 px-4 border border-purple-500 hover:border-transparent rounded', href=`/admin/edit-product/${product._id}`) Edit
+              div(class='mt-4 flex justify-center')
+                a(class='inline-block bg-transparent hover:bg-purple-500 text-purple-500 hover:text-white py-1 px-4 border border-purple-500 hover:border-transparent rounded uppercase text-sm font-semibold', href=`/admin/edit-product/${product._id}`) Edit
 
-                form(class='block mt-4', action='/admin/delete-product' method='POST')
+                form(class='inline-block', action='/admin/delete-product' method='POST')
                   input(type='hidden', name='_csrf' value=csrfToken)
                   input(type='hidden', name='id', value=product._id)
-                  button(class='btn bg-red-400 hover:bg-red-500 py-1 px-4 text-base text-white', type='submit') Delete
+                  button(class='ml-4 btn py-1 px-4 text-sm text-red-400 border border-red-400 hover:bg-red-400 hover:text-white', type='submit') Delete
     else
       h1(class='text-3xl font-semibold mt-4 mb-8 text-center text-gray-900 tracking-wider uppercase underline') No products

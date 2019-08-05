@@ -5,68 +5,50 @@ html(lang='en')
     meta(charset='UTF-8')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     meta(http-equiv='X-UA-Compatible', content='ie=edge')
-    link(rel='stylesheet', href='/css/main.css')
     link(rel='stylesheet', href='/css/styles.css')
+
     block head
     title #{pageTitle}
-  body(class='font-sans bg-gray-100')
-    .backdrop
-    header.main-header
-      button#side-menu-toggle Menu
-      nav.main-header__nav
-        ul.main-header__item-list
-          li.main-header__item
-            a(href='/', class=(path === '/' ? 'active' : '')) Shop
-          li.main-header__item
-            a(href='/products', class=(path === '/products' ? 'active' : '')) Products
-          if isAuthenticated
-            li.main-header__item
-              a(href='/cart', class=(path === '/cart' ? 'active' : '')) Cart
-            li.main-header__item
-              a(href='/orders', class=(path === '/orders' ? 'active' : '')) Orders
-            li.main-header__item
-              a(href='/admin/add-product', class=(path === '/admin/add-product' ? 'active' : '')) Add Product
-            li.main-header__item
-              a(href='/admin/products', class=(path === '/admin/products' ? 'active' : '')) Admin Products
+  body(class='antialiased font-sans bg-gray-100')
+    div(class='backdrop')
+    header(class='lg:flex lg:justify-between bg-gray-200')
+      div(class='flex flex-wrap justify-between md:items-center')
+        div(class=' py-3 px-4 sm:px-6 md:px-8')
+          a(href='/')
+            img(class='w-32 ld:w-48 h-full', src='/img/nodejs.svg', alt="logo")
 
-        ul.main-header__item-list
-          if isAuthenticated
-            li.main-header__item
-              form(action='/logout', method='POST')
-                input(type='hidden', name='_csrf' value=csrfToken)
-                button(type='submit') Logout
-          else
-            li.main-header__item
-              a(href='/login', class=(path === '/login' ? 'active' : '')) Login
-            li.main-header__item
-              a(href='/signup', class=(path === '/signup' ? 'active' : '')) Signup
+        <button id="toggle-nav" type="button" class="lg:hidden px-3 text-gray-600 hover:text-gray-500 focus:outline-none focus:text-gray-500">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 fill-current">
+            //- Hamburger
+            <path id="nav-hamburger" fill-rule="evenodd" d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z"></path>
+            //- Cross icon
+            <path id="nav-cross" class="hidden" fill-rule="evenodd" d="M18.278 16.864a1 1 0 0 1-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 0 1-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 0 1 1.414-1.414l4.829 4.828 4.828-4.828a1 1 0 1 1 1.414 1.414l-4.828 4.829 4.828 4.828z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
 
-    nav.mobile-nav
-      ul.mobile-nav__item-list
-        if !isAuthenticated
-          form(action='/logout', method='POST')
-            input(type='hidden', name='_csrf' value=csrfToken)
-            button(type='submit') Logout
-        else
-          li.mobile-nav__item
-            a(href='/login', class=(path === '/login' ? 'active' : '')) Login
-          li.mobile-nav__item
-            a(href='/signup', class=(path === '/signup' ? 'active' : '')) Signup
-        li.mobile-nav__item
-          a(href='/', class=(path === '/' ? 'active' : '')) Shop
-        li.mobile-nav__item
-          a(href='/products', class=(path === '/products' ? 'active' : '')) Products
+      - var navLinkClasses = 'lg:ml-2 px-4 py-1 block lg:inline text-gray-600 rounded hover:bg-gray-300 focus:bg-gray-300 focus:outline-none text-base lg:px-2'
+      nav(class='hidden py-4 border-t-2 border-gray-300 lg:py-0 lg:px-8 lg:flex lg:items-center', id='nav')
+        a(href='/', class=navLinkClasses, class=(path === '/' ? 'text-purple-500 underline' : '')) Shop
+        a(href='/products', class=navLinkClasses, class=(path === '/products' ? 'text-purple-500 underline' : '')) Products
         if isAuthenticated
-          li.mobile-nav__item
-            a(href='/cart', class=(path === '/cart' ? 'active' : '')) Cart
-          li.mobile-nav__item
-            a(href='/orders', class=(path === '/orders' ? 'active' : '')) Orders
-          li.mobile-nav__item
-            a(href='/admin/add-product', class=(path === '/admin/add-product' ? 'active' : '')) Add Product
-          li.mobile-nav__item
-            a(href='/admin/products', class=(path === '/admin/products' ? 'active' : '')) Admin Products
+          a(href='/cart', class=navLinkClasses, class=(path === '/cart' ? 'text-purple-500 underline' : '')) Cart
+          a(href='/orders', class=navLinkClasses, class=(path === '/orders' ? 'text-purple-500 underline' : '')) Orders
+          a(href='/admin/add-product', class=navLinkClasses, class=(path === '/admin/add-product' ? 'text-purple-500 underline' : '')) Add Product
+          a(href='/admin/products', class=navLinkClasses, class=(path === '/admin/products' ? 'text-purple-500 underline' : '')) Admin Products
+
+        span(class='hidden mx-2 text-2xl lg:inline') &bull;
+        span(class='block border-t-2 border-gray-300 my-4 lg:hidden')
+        if isAuthenticated
+          form(class='ml-2 inline-block', action='/logout', method='POST')
+            input(type='hidden', name='_csrf' value=csrfToken)
+            button(class='ml-2 px-2 py-1 text-gray-700 border border-gray-700 rounded hover:bg-gray-700 hover:text-gray-200 focus:outline-none focus:shadow-outline lg:ml-0', type='submit') Logout
+        else
+          a(href='/login', class='ml-2 px-4 py-2 text-gray-700 border border-gray-700 rounded hover:bg-gray-700 hover:text-gray-200 focus:outline-none focus:shadow-outline', class=(path === '/login' ? 'active' : '')) Log In
+          a(href='/signup', class='ml-6 lg:ml-4 px-4 py-2 text-white border border-purple-500 bg-purple-500 rounded hover:bg-purple-400 shadow focus:outline-none focus:shadow-outline', class=(path === '/signup' ? 'active' : '')) Sign Up
 
     block content
 
+    script(src='/js/jquery.min.js')
     script(src='/js/main.js')
+
     block scripts

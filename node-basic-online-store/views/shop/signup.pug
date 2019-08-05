@@ -1,19 +1,16 @@
 extends ../layouts/main-layout.pug
 
-block head
-    link(rel='stylesheet', href='/css/products.css')
-
 block content
   main(class='min-h-screen flex-wrap')
 
     if typeof validationErrors === 'undefined'
       - validationErrors = {}
 
-    div(class='mb-6 max-w-md mx-auto')
-      include ../includes/flash-msgs.pug
+    div(class='mt-12 shadow-md px-8 py-5 rounded-sm max-w-md mx-auto w-full bg-white')
+      h1(class='text-3xl font-bold text-center text-gray-800') Create your account
 
-    div(class='shadow-md px-8 py-5 rounded-sm max-w-md mx-auto w-full bg-white')
-      h1(class='text-3xl font-bold text-center text-gray-800') Sign Up
+      div(class='mb-6 max-w-md mx-auto')
+        include ../includes/flash-msgs.pug
 
       div(class='mt-6 py-4')
         form(class='w-full', action='/signup', method='POST')
@@ -28,7 +25,7 @@ block content
           div(class='w-full border rounded border-b-0')
             input#cofirmPassword(class='w-full block border-b-2 rounded px-3 py-2 text-gray-600 focus:outline-none  focus:border-gray-600', type='password', name='confirmPassword', placeholder='Confirm Password')
 
-          button.btn(class='bg-green-500 text-white w-full mt-4 font-semibold', type='submit') Create Account
+          button.btn(class='bg-green-500 text-white w-full mt-4 font-semibold', type='submit') Sign Up
 
     div(class='mt-6 w-full text-center')
       span(class='text-gray-500') Already have an account?&nbsp;

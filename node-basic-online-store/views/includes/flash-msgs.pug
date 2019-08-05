@@ -1,5 +1,5 @@
 if (errorFlash && errorFlash.length)
-  .max-w-lg.mx-auto.bg-red-100.border-t-4.border-red-500.rounded-b.text-red-900.px-4.py-3.shadow-md(role='alert')
+  .my-6.max-w-lg.mx-auto.bg-red-100.border-t-4.border-red-500.rounded-b.text-red-900.px-4.py-3.shadow-md(role='alert')
     for msg in errorFlash
       .flex(class='not:last-child:mb-4')
         .py-1
@@ -10,7 +10,7 @@ if (errorFlash && errorFlash.length)
 
 
 if (infoFlash && infoFlash.length)
-  .max-w-lg.mx-auto.bg-blue-100.border-t-4.border-blue-500.rounded-b.text-blue-900.px-4.py-3.shadow-md(role='alert')
+  .my-6.max-w-lg.mx-auto.bg-blue-100.border-t-4.border-blue-500.rounded-b.text-blue-900.px-4.py-3.shadow-md(role='alert')
   for msg in infoFlash
     .flex(class='not:last-child:mb-4')
       .py-1
@@ -21,7 +21,7 @@ if (infoFlash && infoFlash.length)
 
 
 if (warningFlash && warningFlash.length)
-  .max-w-lg.mx-auto.bg-yellow-100.border-t-4.border-yellow-500.rounded-b.text-yellow-900.px-4.py-3.shadow-md(role='alert')
+  .my-6.max-w-lg.mx-auto.bg-yellow-100.border-t-4.border-yellow-500.rounded-b.text-yellow-900.px-4.py-3.shadow-md(role='alert')
   for msg in warningFlash
     .flex(class='not:last-child:mb-4')
       .py-1
@@ -32,7 +32,7 @@ if (warningFlash && warningFlash.length)
 
 
 if (successFlash && successFlash.length)
-  .max-w-lg.mx-auto.bg-green-100.border-t-4.border-green-500.rounded-b.text-green-900.px-4.py-3.shadow-md(role='alert')
+  .my-6.max-w-lg.mx-auto.bg-green-100.border-t-4.border-green-500.rounded-b.text-green-900.px-4.py-3.shadow-md(role='alert')
   for msg in errorFlash
     .flex(class='not:last-child:mb-4')
       .py-1
