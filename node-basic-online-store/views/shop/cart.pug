@@ -1,29 +1,45 @@
 extends ../layouts/main-layout.pug
 
 block content
-  main
+  main(class='mx-4')
     if !itemCount || itemCount < 1 || products.length === 0
       h1(class='text-3xl font-semibold mt-4 mb-8 text-center text-gray-900 tracking-wider uppercase underline') Cart is Empty
     else
       h1(class='text-3xl font-semibold mt-4 mb-8 text-center text-gray-900 tracking-wider uppercase underline') Your Cart (#{itemCount})
-      .grid
-          each product in products
-            article.card.product-item
-              header.card__header
-                h1.product__title #{product.title}
-                .card__image
-                  img(src=product.imageUrl, alt=product.title)
-                .card__content
-                  h2.product__price $#{product.price} #{product.quantity > 1 ? 'x' + product.quantity : null}
-                  p.product__description #{product.description}
-                .card__actions
-                  a.btn(href=`/products/${product._id}`) Details
+      div(class='mt-16')
+        table(class='text-left w-full border-collapse max-w-4xl mx-auto')
+          thead
+            tr
+              th(class='hidden sm:table-cell')
+              th(class='px-2 py-4 border') Title
+              th(class='px-2 py-4 border') Quantity
+              th(class='px-2 py-4 border') Unit Price
+              th
+          tbody(class='text-gray-800')
+            each product in products
+              tr
+                td(class='border w-20 h-20 hidden sm:table-cell')
+                  a(href=`/products/${product._id}`)
+                    img(class='w-full mx-auto object-cover w-20 h-20', src=product.imageUrl, alt=product.title)
+                td(class='px-2 py-1 border')
+                  a(class='normal-case hover:underline', href=`/products/${product._id}`) #{product.title}
+                td(class='px-2 py-1 border')
+                  span x#{product.quantity}
+                td(class='px-2 py-1 border')
+                  span $#{product.price}
+                td(class='px-2 py-1 border w-4 sm:w-12')
                   form(action='/cart-delete-item' method='POST')
                     input(type='hidden', name='_csrf' value=csrfToken)
                     input(type='hidden', name='id', value=product._id)
-                    button.btn(type='submit') Remove From Cart
+                    button.btn(class='py-1 px-2 text-gray-600 hover:text-red-700 border border-transparent hover:border-red-700 text-xs sm:text-sm', type='submit', aria-label="remove")
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path class="heroicon-ui" d="M8 6V4c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2h5a1 1 0 0 1 0 2h-1v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8H3a1 1 0 1 1 0-2h5zM6 8v12h12V8H6zm8-2V4h-4v2h4zm-4 4a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1z"/></svg>
 
-      h3 Total Price: #{totalPrice}
-      form(action='/create-order', method='POST')
-        input(type='hidden', name='_csrf' value=csrfToken)
-        button.btn(type='submit') Order Now
+      div(class='mt-8 sm:mt-16 mb-10')
+        div
+          hr(class='mt-10 mb-6 border-t border-gray-300 w-1/2 mx-auto block sm:mb-10')
+        h3(class='text-lg text-center font-semibold text-xl text-purple-900 underline')
+          span(class='text-xl uppercase') Total Price:&nbsp;
+          span $#{totalPrice}
+        form(class='block mt-6', action='/create-order', method='POST')
+          input(type='hidden', name='_csrf' value=csrfToken)
+          button.btn(class='block w-full sm:max-w-md bg-purple-500 hover:bg-purple-400 text-white sm:mx-auto', type='submit') Order Now

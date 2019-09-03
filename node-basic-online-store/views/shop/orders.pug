@@ -1,18 +1,62 @@
 extends ../layouts/main-layout.pug
 
 block content
-  main
+  main(class='mx-4')
     if (!orders || !orders.length)
-      h1 No orders
+      h1(class='text-3xl font-semibold mt-4 mb-8 text-center text-gray-900 tracking-wider uppercase underline') No orders
     else
-      h1 Your Orders (#{orders.length})
-      ul
-        for order in orders
-          li
-            h4 Order ##{order._id} -
-              a(href=`/orders/${order._id}`)  Invoice
-            ul
-              for product in order.items
-                li
-                  a(href=`/products/${product._id}`) #{product.title} - (x#{product.quantity})
-            p Total: #{order.totalPrice}
+      h1(class='text-3xl font-semibold mt-4 mb-8 text-center text-gray-900 tracking-wider uppercase underline') Your Orders (#{orders.length})
+      table(class='mt-16 text-left w-full border-collapse max-w-4xl mx-auto')
+          thead
+            tr
+              th(class='px-2 py-4 border') Order ID
+              th(class='px-2 py-4 border') Total Price
+              th(class='px-2 py-4 border hidden')
+          tbody(class='text-gray-800')
+            each order in orders
+              tr(data-order_json=`${JSON.stringify(order)}`)
+                td(class='px-2 py-4 border')
+                  span(class='cursor-pointer underline hover:text-purple-500', data-custom-micromodal-trigger="order-details-modal") #{order._id}
+                td(class='px-2 py-4 border')
+                  span $#{order.totalPrice}
+                td(class='px-2 py-4 border w-8')
+                  a(class='flex items-center', href=`/orders/${order._id}`)
+                    <svg class="inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path class="heroicon-ui" d="M11 14.59V3a1 1 0 0 1 2 0v11.59l3.3-3.3a1 1 0 0 1 1.4 1.42l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 0 1 1.4-1.42l3.3 3.3zM3 17a1 1 0 0 1 2 0v3h14v-3a1 1 0 0 1 2 0v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3z"/></svg>
+                    span(class='ml-2 inline-block') Invoice
+
+
+      #order-details-modal(class='modal z-50 micromodal-slide', aria-hidden='true')
+        div(class='modal__overlay fixed inset-0 opacity-50 bg-gray-800', tabindex="-1", data-micromodal-close)
+        div(class='fixed inset-0 flex items-center justify-center', data-micromodal-close)
+          div(class='modal__container relative bg-white px-8 py-4 rounded shadow-xl w-full max-w-xl', role="dialog", aria-modal="true" aria-labelledby="order-details-modal-title")
+            button(class='absolute right-0 top-0 mr-2 mt-2 text-gray-500 hover:text-gray-600', aria-label="Close modal" data-micromodal-close)
+                <svg data-micromodal-close xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path data-micromodal-close fill="currentColor" d="M4.93 19.07A10 10 0 1 1 19.07 4.93 10 10 0 0 1 4.93 19.07zm1.41-1.41A8 8 0 1 0 17.66 6.34 8 8 0 0 0 6.34 17.66zM13.41 12l1.42 1.41a1 1 0 1 1-1.42 1.42L12 13.4l-1.41 1.42a1 1 0 1 1-1.42-1.42L10.6 12l-1.42-1.41a1 1 0 1 1 1.42-1.42L12 10.6l1.41-1.42a1 1 0 1 1 1.42 1.42L13.4 12z"/></svg>
+
+            header
+              h2(class='modal__title text-lg font-sans text-xl font-semibold text-gray-800 text-center') Modal Title
+
+            div(class='modal__content mt-6 text-gray-700')
+              table(class='text-left w-full border-collapse max-w-4xl mx-auto')
+                thead
+                  tr
+                    th(class='hidden sm:table-cell')
+                    th(class='px-2 py-4 border') Title
+                    th(class='px-2 py-4 border') Quantity
+                    th(class='px-2 py-4 border') Unit Price
+                tbody(class='text-gray-800')
+                  tr
+                    td(class='border w-20 h-20 hidden sm:table-cell image')
+                      a(href='')
+                        img(class='w-full mx-auto object-cover w-20 h-20', src='', alt='')
+                    td(class='px-2 py-1 border title')
+                      a(class='normal-case hover:underline', href='')
+                    td(class='px-2 py-1 border quantity')
+                      span
+                    td(class='px-2 py-1 border price')
+                      span
+
+              div(class='mt-6 mb-2')
+                h3(class='text-lg text-center font-semibold text-xl text-purple-900 underline')
+                  span(class='text-xl uppercase') Total Price:&nbsp;
+                  span(class='modal__total-price')
+                a(class='modal__invoice btn mt-4 block w-full sm:max-w-md bg-purple-500 hover:bg-purple-400 text-white text-center sm:mx-auto', href='') Invoice

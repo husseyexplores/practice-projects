@@ -7,13 +7,18 @@ block content
 
     if product && product.title
       .grid
-        article.card.product-item
-          header.card__header
-            h1.product__title #{product.title}
-            .card__image
-              img(src=product.imageUrl, alt=product.title)
+        article(class='sm:flex sm:mt-12')
+          div(class='w-full sm:w-1/2 sm:mx-8')
+            img(class='mx-auto', src=product.imageUrl, alt=product.title)
+          div(class='px-4 w-full sm:w-1/2 sm:mt-8 sm:max-w-md')
+            header
+              h1(class='text-gray-900 text-center uppercase text-base tracking-wider font-semibold text-2xl my-4 sm:text-left') #{product.title}
             .card__content
-              h2.product__price $#{product.price}
-              p.product__description #{product.description}
-            .card__actions
-              include ../includes/add-to-cart-btn.pug
+              h2(class='text-gray-900 text-center uppercase text-base tracking-wider font-semibold text-xl -mt-2 sm:text-left') $#{product.price}
+              p(class='mt-2 sm:mt-8 text-base text-gray-800 text-lg') #{product.description}
+            div(class='flex justify-center sm:mt-6')
+              if isAuthenticated
+                form(class='w-full', action='/cart' method='POST')
+                  input(type='hidden', name='_csrf' value=csrfToken)
+                  input(type='hidden', name='id', value=product._id)
+                  button(class='px-2 sm:px-6 btn py-3 mt-4 bg-purple-500 shadow hover:shadow-md hover:bg-purple-400 text-white border-0 w-full block', type='submit') Add to Cart

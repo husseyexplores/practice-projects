@@ -18,7 +18,13 @@ block content
 
     else
       div(class='w-full max-w-lg mx-auto')
-        form(class='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-4', action=formAction, method='POST', enctype='multipart/form-data')
+        h1(class='mt-6 uppercase text-xl font-semibold font-sans text-gray-800')
+          if isEditting
+            | #{product.title}
+          else
+            | Create a new product
+
+        form(class='mt-6 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-4', action=formAction, method='POST', enctype='multipart/form-data')
           if isEditting
             input(type='hidden', name='id', value=product._id)
 
@@ -37,7 +43,7 @@ block content
             if product.imageUrl
               .div(class='w-full sm:w-1/2 mt-5 sm:mt-0')
                 input(type='hidden', name='imageUrl', value=product.imageUrl)
-                img(class='h-auto w-24', src=product.imageUrl, alt=product.title)
+                img(class='h-auto w-24 object-cover sm:mt-8', src=product.imageUrl, alt=product.title)
 
           .mb-5
             label(class='block form-label', for='price') Price
@@ -47,4 +53,5 @@ block content
             label(class='block form-label', for='description') Description
             textarea#description(class='form-input', class=validationErrors.description && 'error-input', rows='5', name='description') #{product.description}
 
-          button(class='btn bg-purple-500 shadow-lg hover:bg-purple-400 text-white border-0', type='submit')= isEditting ? 'Save Changes' : 'Add Product'
+          div(class='mt-8 flex justify-end')
+            button(class='w-full btn bg-purple-500 shadow-lg hover:bg-purple-400 text-white border-0 sm:w-auto', type='submit')= isEditting ? 'Save Changes' : 'Add Product'
