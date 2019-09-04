@@ -26,5 +26,9 @@ block content
                   input(type='hidden', name='_csrf' value=csrfToken)
                   input(type='hidden', name='id', value=product._id)
                   button(class='ml-4 btn py-1 px-4 text-sm text-red-400 border border-red-400 hover:bg-red-400 hover:text-white', type='submit') Delete
+
+      section.pagination(class='mt-8 text-center flex justify-center')
+        include ../includes/pagination.pug
+
     else
       h1(class='text-3xl font-semibold mt-4 mb-8 text-center text-gray-900 tracking-wider uppercase underline') No products

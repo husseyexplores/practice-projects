@@ -1,7 +1,7 @@
 extends ../layouts/main-layout.pug
 
 block content
-  main
+  main(class='mx-4 mb-8')
     include ../includes/flash-msgs.pug
     if prods.length > 0
       h1(class='text-3xl font-semibold mt-4 mb-8 text-center text-gray-900 tracking-wider uppercase underline') Homepage
@@ -18,5 +18,9 @@ block content
                 span(class='text-base text-gray-600') $#{product.price}
               div
                 include ../includes/add-to-cart-btn.pug
+
+      section.pagination(class='mt-8 text-center flex justify-center')
+        include ../includes/pagination.pug
+
     else
       h1 No products

@@ -1,0 +1,32 @@
+//- Previous Page Arrow
+a(class='block px-2 py-2 border text-gray-600 hover:bg-purple-400 hover:text-white flex items-center', class=`${!hasPrevPage ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`, href=`${path}?limit=${itemsLimit}&page=${hasPrevPage ? prevPage : currentPage}`)
+  svg(viewbox='0 0 20 20', version='1.1', xmlns='http://www.w3.org/2000/svg', xmlns:xlink='http://www.w3.org/1999/xlink', width='20', height='20', fill='currentColor')
+    g(stroke='none', stroke-width='1', fill-rule='evenodd')
+      g
+        polygon(points='7.05025253 9.29289322 6.34314575 10 12 15.6568542 13.4142136 14.2426407 9.17157288 10 13.4142136 5.75735931 12 4.34314575')
+
+//- First page
+if (currentPage > 1 && prevPage !== 1)
+  a(class='block px-4 py-2 border text-gray-700 hover:bg-purple-500 hover:text-white', href=`${path}?limit=${itemsLimit}&page=1`) 1
+
+//- Previous Page
+if (hasPrevPage)
+  a(class='block px-4 py-2 border text-gray-700 hover:bg-purple-500 hover:text-white', href=`${path}?limit=${itemsLimit}&page=${prevPage}`) #{prevPage}
+
+//- Current Page
+a(class='block px-4 py-2 border bg-purple-500 text-white hover:bg-purple-400', href=`${path}?limit=${itemsLimit}&page=${currentPage}`) #{currentPage}
+
+//- Next Page
+if (hasNextPage)
+  a(class='block px-4 py-2 border text-gray-700 hover:bg-purple-500 hover:text-white', href=`${path}?limit=${itemsLimit}&page=${nextPage}`) #{nextPage}
+
+//- Last page
+if (currentPage < lastPage && lastPage - 1 !== currentPage)
+  a(class='block px-4 py-2 border text-gray-700 hover:bg-purple-500 hover:text-white', href=`${path}?limit=${itemsLimit}&page=${lastPage}`) #{lastPage}
+
+//- Next Page Arrow
+a(class='block px-2 py-2 border text-gray-600 hover:bg-purple-400 hover:text-white flex items-center', class=`${!hasNextPage ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`, href=`${path}?limit=${itemsLimit}&page=${hasNextPage ? nextPage : currentPage}`)
+  svg(viewbox='0 0 20 20', version='1.1', xmlns='http://www.w3.org/2000/svg', xmlns:xlink='http://www.w3.org/1999/xlink', width='20', height='20', fill='currentColor')
+    g(stroke='none', stroke-width='1', fill-rule='evenodd')
+      g
+        polygon(points='12.9497475 10.7071068 13.6568542 10 8 4.34314575 6.58578644 5.75735931 10.8284271 10 6.58578644 14.2426407 8 15.6568542 12.9497475 10.7071068')

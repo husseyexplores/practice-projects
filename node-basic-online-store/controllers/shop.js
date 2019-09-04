@@ -1,28 +1,128 @@
-const fs = require('fs')
-const path = require('path')
 const PDFDoc = require('pdfkit')
 const { validationResult } = require('express-validator')
 const { catchAsyncErr } = require('../handlers/errorHandlers')
 const { throwErr } = require('../utils/helpers')
 const Product = require('../models/Product')
 
+// //////////////////////////////////////////////////////////////////////
+
 exports.getIndex = catchAsyncErr(async (req, res) => {
-  const products = await Product.find()
+  let { page = 1, limit = 3 } = req.query
+  let itemsPerPage = limit
+
+  // Convert to integer
+  if (page) {
+    page = Number(page)
+  }
+
+  // Set default if the format is invalid
+  if (!page || !Number.isInteger(page)) {
+    page = 1
+  }
+
+  // Set defaults
+  if (page < 1) {
+    page = 1
+  }
+
+  // Convert to integer
+  if (itemsPerPage) {
+    itemsPerPage = Number(itemsPerPage)
+  }
+
+  // Set defaults
+  if (!itemsPerPage || !Number.isInteger(itemsPerPage)) {
+    itemsPerPage = 3
+  }
+
+  if (itemsPerPage > 250) {
+    itemsPerPage = 250
+  }
+
+  if (itemsPerPage < 1) {
+    itemsPerPage = 1
+  }
+
+  // Get count
+  const [totalItems, products] = await Promise.all([
+    Product.countDocuments(),
+    Product.find()
+      .skip((page - 1) * itemsPerPage)
+      .limit(itemsPerPage),
+  ])
 
   res.render('shop/index', {
     pageTitle: 'Shop',
     path: '/',
     prods: products,
+    currentPage: page,
+    totalItems,
+    hasNextPage: itemsPerPage * page < totalItems,
+    hasPrevPage: page > 1,
+    nextPage: page + 1,
+    prevPage: page > 1 ? page - 1 : null,
+    lastPage: Math.ceil(totalItems / itemsPerPage),
+    itemsLimit: limit,
   })
 })
 
 exports.getProducts = catchAsyncErr(async (req, res) => {
-  const products = await Product.find()
+  let { page = 1, limit = 3 } = req.query
+  let itemsPerPage = limit
+
+  // Convert to integer
+  if (page) {
+    page = Number(page)
+  }
+
+  // Set default if the format is invalid
+  if (!page || !Number.isInteger(page)) {
+    page = 1
+  }
+
+  // Set defaults
+  if (page < 1) {
+    page = 1
+  }
+
+  // Convert to integer
+  if (itemsPerPage) {
+    itemsPerPage = Number(itemsPerPage)
+  }
+
+  // Set defaults
+  if (!itemsPerPage || !Number.isInteger(itemsPerPage)) {
+    itemsPerPage = 3
+  }
+
+  if (itemsPerPage > 250) {
+    itemsPerPage = 250
+  }
+
+  if (itemsPerPage < 1) {
+    itemsPerPage = 1
+  }
+
+  // Get count
+  const [totalItems, products] = await Promise.all([
+    Product.countDocuments(),
+    Product.find()
+      .skip((page - 1) * itemsPerPage)
+      .limit(itemsPerPage),
+  ])
 
   res.render('shop/product-list', {
     pageTitle: 'All Products',
     path: '/products',
     prods: products,
+    currentPage: page,
+    totalItems,
+    hasNextPage: itemsPerPage * page < totalItems,
+    hasPrevPage: page > 1,
+    nextPage: page + 1,
+    prevPage: page > 1 ? page - 1 : null,
+    lastPage: Math.ceil(totalItems / itemsPerPage),
+    itemsLimit: limit,
   })
 })
 
@@ -99,12 +199,63 @@ exports.postOrder = catchAsyncErr(async (req, res) => {
 })
 
 exports.getOrders = catchAsyncErr(async (req, res) => {
-  const orders = await req.user.getOrders()
+  let { page = 1, limit = 3 } = req.query
+  let itemsPerPage = limit
+
+  // Convert to integer
+  if (page) {
+    page = Number(page)
+  }
+
+  // Set default if the format is invalid
+  if (!page || !Number.isInteger(page)) {
+    page = 1
+  }
+
+  // Set defaults
+  if (page < 1) {
+    page = 1
+  }
+
+  // Convert to integer
+  if (itemsPerPage) {
+    itemsPerPage = Number(itemsPerPage)
+  }
+
+  // Set defaults
+  if (!itemsPerPage || !Number.isInteger(itemsPerPage)) {
+    itemsPerPage = 3
+  }
+
+  if (itemsPerPage > 250) {
+    itemsPerPage = 250
+  }
+
+  if (itemsPerPage < 1) {
+    itemsPerPage = 1
+  }
+
+  // Get count
+  const [totalItems, orders] = await Promise.all([
+    req.user.getOrdersCount(),
+    req.user
+      .getOrders()
+      .skip((page - 1) * itemsPerPage)
+      .limit(itemsPerPage),
+  ])
 
   res.render('shop/orders', {
     pageTitle: 'Your Orders',
     path: '/orders',
     orders,
+    currentPage: page,
+    totalItems,
+    hasNextPage: itemsPerPage * page < totalItems,
+    hasPrevPage: page > 1,
+    nextPage: page + 1,
+    prevPage: page > 1 ? page - 1 : null,
+    lastPage: Math.ceil(totalItems / itemsPerPage),
+    itemsLimit: limit,
   })
 })
 

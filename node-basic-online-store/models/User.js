@@ -140,6 +140,10 @@ userSchema.methods.createOrder = async function createOrder() {
   return result
 }
 
+userSchema.methods.getOrdersCount = function getOrders() {
+  return Order.countDocuments({ userId: this._id })
+}
+
 userSchema.methods.getOrders = function getOrders() {
   return Order.find({ userId: this._id })
 }

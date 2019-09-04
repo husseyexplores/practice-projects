@@ -811,6 +811,10 @@ video {
           animation: mmslideOut .25s cubic-bezier(0, 0, .2, 1);
 }
 
+.pagination a:not(:first-child) {
+  border-left-width: 0;
+}
+
 /* Custom Utilities */
 
 .appearance-text {

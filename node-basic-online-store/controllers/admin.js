@@ -150,11 +150,60 @@ exports.postDeleteProduct = catchAsyncErr(async (req, res) => {
 })
 
 exports.getProducts = catchAsyncErr(async (req, res) => {
-  const products = await Product.find({ userId: req.user.id })
+  let { page = 1, limit = 3 } = req.query
+  let itemsPerPage = limit
+
+  // Convert to integer
+  if (page) {
+    page = Number(page)
+  }
+
+  // Set default if the format is invalid
+  if (!page || !Number.isInteger(page)) {
+    page = 1
+  }
+
+  // Set defaults
+  if (page < 1) {
+    page = 1
+  }
+
+  // Convert to integer
+  if (itemsPerPage) {
+    itemsPerPage = Number(itemsPerPage)
+  }
+
+  // Set defaults
+  if (!itemsPerPage || !Number.isInteger(itemsPerPage)) {
+    itemsPerPage = 3
+  }
+
+  if (itemsPerPage > 250) {
+    itemsPerPage = 250
+  }
+
+  if (itemsPerPage < 1) {
+    itemsPerPage = 1
+  }
+
+  const [totalItems, products] = await Promise.all([
+    Product.countDocuments({ userId: req.user.id }),
+    Product.find({ userId: req.user.id })
+      .skip((page - 1) * itemsPerPage)
+      .limit(itemsPerPage),
+  ])
 
   res.render('admin/products', {
     pageTitle: 'Admin Products',
     path: '/admin/products',
     prods: products,
+    currentPage: page,
+    totalItems,
+    hasNextPage: itemsPerPage * page < totalItems,
+    hasPrevPage: page > 1,
+    nextPage: page + 1,
+    prevPage: page > 1 ? page - 1 : null,
+    lastPage: Math.ceil(totalItems / itemsPerPage),
+    itemsLimit: limit,
   })
 })
