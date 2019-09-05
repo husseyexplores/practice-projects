@@ -40,6 +40,5 @@ block content
         h3(class='text-lg text-center font-semibold text-xl text-purple-900 underline')
           span(class='text-xl uppercase') Total Price:&nbsp;
           span $#{totalPrice}
-        form(class='block mt-6', action='/create-order', method='POST')
-          input(type='hidden', name='_csrf' value=csrfToken)
-          button.btn(class='block w-full sm:max-w-md bg-purple-500 hover:bg-purple-400 text-white sm:mx-auto', type='submit') Order Now
+        a.btn(class='mt-6 block w-full sm:max-w-md bg-purple-500 hover:bg-purple-400 text-white text-center sm:mx-auto', href='/checkout') Checkout
+

@@ -1,3 +1,5 @@
+// Set your secret key: remember to change this to your live secret key in production
+const stripe = require('stripe')(process.env.STRIPE_TEST_KEY)
 const PDFDoc = require('pdfkit')
 const { validationResult } = require('express-validator')
 const { catchAsyncErr } = require('../handlers/errorHandlers')
@@ -191,6 +193,7 @@ exports.postDeleteCartItem = catchAsyncErr(async (req, res) => {
   res.redirect('/cart')
 })
 
+// Not in use. Using stripe now
 exports.postOrder = catchAsyncErr(async (req, res) => {
   // Add the products in the user's cart to the order
   await req.user.createOrder()
@@ -299,9 +302,54 @@ exports.getInvoice = catchAsyncErr(async (req, res, next) => {
   pdf.end()
 })
 
-exports.getCheckout = (req, res) => {
+exports.getCheckout = catchAsyncErr(async (req, res) => {
+  const cartProducts = await req.user.getCart()
+
+  if (!cartProducts) throwErr('Cart not found', 'Server/Database Erorr', 500)
+
+  const totalPrice = cartProducts.reduce(
+    (total, { price, quantity }) => total + quantity * price,
+    0
+  )
+
+  if (cartProducts.length === 0) {
+    return res.redirect('/')
+  }
+
   res.render('shop/checkout', {
     pageTitle: 'Checkout',
-    path: '/cart',
+    path: '/checkout',
+    itemCount: cartProducts.length,
+    products: cartProducts,
+    totalPrice,
   })
-}
+})
+
+exports.postCheckout = catchAsyncErr(async (req, res) => {
+  // Token is created using Checkout or Elements!
+  const { stripeToken } = req.body
+  const cartProducts = await req.user.getCart()
+
+  if (!cartProducts) throwErr('Cart not found', 'Server/Database Erorr', 500)
+
+  // Add the products in the user's cart to the order
+  const order = await req.user.createOrder()
+
+  // In dollars
+  const totalPrice = cartProducts.reduce(
+    (total, { price, quantity }) => total + quantity * price,
+    0
+  )
+
+  const charge = await stripe.charges.create({
+    amount: totalPrice * 100, // In cents
+    currency: 'usd',
+    description: 'Example charge',
+    source: stripeToken,
+    metadata: {
+      orderId: order._id.toString(),
+    },
+  })
+
+  res.redirect('/orders')
+})

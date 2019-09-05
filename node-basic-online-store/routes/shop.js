@@ -10,6 +10,7 @@ const {
   postOrder,
   getInvoice,
   getCheckout,
+  postCheckout,
 } = require('../controllers/shop')
 const isAuth = require('../middleware/isAuth')
 const { getOrderValidator } = require('../validators/shop')
@@ -30,5 +31,6 @@ router.post('/create-order', isAuth, postOrder)
 router.get('/orders/:orderId', [isAuth, getOrderValidator], getInvoice)
 
 router.get('/checkout', isAuth, getCheckout)
+router.post('/checkout', isAuth, postCheckout)
 
 module.exports = router

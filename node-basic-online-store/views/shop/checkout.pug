@@ -1,5 +1,25 @@
 extends ../layouts/main-layout.pug
 
 block content
-  main
-    h1 Checkout
+  main(class='mx-4')
+    h1(class='text-3xl font-semibold mt-4 mb-8 text-center text-gray-900 tracking-wider uppercase underline') Checkout
+
+    div(class='mt-8 sm:mt-16 mb-10')
+
+      h3(class='text-lg text-center font-semibold text-xl text-purple-900 underline')
+        span(class='text-xl uppercase') Total Price:&nbsp;
+        span $#{totalPrice}
+
+      script(src='https://js.stripe.com/v3/')
+      div(class='mt-6 flex justify-center')
+        form#payment-form(class='block max-w-lg flex-grow', action='/checkout', method='POST')
+          input(type='hidden', name='_csrf' value=csrfToken)
+          .form-row
+            label(for='card-element', class='text-gray-700') Credit or debit card
+            #card-element
+              //- A Stripe Element will be inserted here.
+            //- Used to display form errors.
+            #card-errors(role='alert')
+          button.btn(class='mt-6 block w-full sm:max-w-xs bg-purple-500 hover:bg-purple-400 text-white sm:mx-auto', type='submit') Complete Purchase
+
+    script(src='/js/checkout.js')
