@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "wesbos"
+  ],
+  "rules": {
+    "no-plusplus": 0,
+    "semi": "off",
+    "prefer-promise-reject-errors": "off"
+  }
+}
