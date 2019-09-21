@@ -21,6 +21,7 @@ uploads
 .vscode
 .idea
 .env
+.next
 
 .firebase
 .firebaserc
