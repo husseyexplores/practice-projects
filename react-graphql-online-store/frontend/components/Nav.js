@@ -2,16 +2,29 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Link from 'next/link'
 
+import StyledNav from './styles/NavStyles'
+
+// ----------------------------------------------------------------------------
+
 function Nav() {
   return (
-    <div>
-      <Link href="/">
-        <a>Home</a>
+    <StyledNav>
+      <Link href="/items">
+        <a>Items</a>
       </Link>
       <Link href="/sell">
         <a>Sell</a>
       </Link>
-    </div>
+      <Link href="/signup">
+        <a>Signup</a>
+      </Link>
+      <Link href="/orders">
+        <a>Orders</a>
+      </Link>
+      <Link href="/me">
+        <a>Me</a>
+      </Link>
+    </StyledNav>
   )
 }
 
