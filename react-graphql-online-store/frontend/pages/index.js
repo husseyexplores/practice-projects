@@ -1,7 +1,15 @@
+import React from 'react'
 import PropTypes from 'prop-types'
+import Items from '../components/Items'
+
+// ----------------------------------------------------------------------------
 
 function Home() {
-  return <div>Home</div>
+  return (
+    <div>
+      <Items />
+    </div>
+  )
 }
 
 Home.propTypes = {}
