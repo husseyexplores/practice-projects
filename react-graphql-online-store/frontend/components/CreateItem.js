@@ -100,10 +100,10 @@ class CreateItem extends Component {
               })
 
               // Redirect to the item page
-              // Router.push({
-              //   pathname: '/item',
-              //   query: { id: response.data.createItem.id },
-              // })
+              Router.push({
+                pathname: '/item',
+                query: { id: response.data.createItem.id },
+              })
             }}
           >
             <Error error={error} />

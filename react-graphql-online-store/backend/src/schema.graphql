@@ -12,9 +12,14 @@ input ItemInput {
 # Mutations
 type Mutation {
   createItem(data: ItemInput!): Item!
+
+  # TODO: Add support for updating image
+  updateItem(id: ID!, title: String, description: String, price: Int): Item!
+  deleteItem(where: ItemWhereUniqueInput!): Item
 }
 
 #Queries
 type Query {
   items: [Item!]!,
+  item(where: ItemWhereUniqueInput!): Item
 }
