@@ -4,14 +4,14 @@ import SingleItem from '../components/SingleItem'
 
 // ----------------------------------------------------------------------------
 
-function item({ query }) {
+function ItemPage({ query }) {
   return <SingleItem id={query ? query.id : undefined} />
 }
 
-item.propTypes = {
+ItemPage.propTypes = {
   query: PropTypes.object,
 }
 
-item.defaultProps = {}
+ItemPage.defaultProps = {}
 
-export default item
+export default ItemPage

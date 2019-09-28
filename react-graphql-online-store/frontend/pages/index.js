@@ -4,16 +4,23 @@ import Items from '../components/Items'
 
 // ----------------------------------------------------------------------------
 
-function Home() {
+function HomePage({ query }) {
+  let page = parseInt(query.page, 10) || 1
+  if (!page || !Number.isInteger(page) || page < 0) {
+    page = 1
+  }
+
   return (
     <div>
-      <Items />
+      <Items page={page} />
     </div>
   )
 }
 
-Home.propTypes = {}
+HomePage.propTypes = {
+  query: PropTypes.object,
+}
 
-Home.defaultProps = {}
+HomePage.defaultProps = {}
 
-export default Home
+export default HomePage
