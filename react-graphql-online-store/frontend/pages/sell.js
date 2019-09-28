@@ -5,12 +5,12 @@ import CreateItem from '../components/CreateItem'
 
 // ----------------------------------------------------------------------------
 
-const Sell = () => (
+const SellPage = () => (
   <div>
     <CreateItem />
   </div>
 )
 
-Sell.propTypes = {}
+SellPage.propTypes = {}
 
-export default Sell
+export default SellPage

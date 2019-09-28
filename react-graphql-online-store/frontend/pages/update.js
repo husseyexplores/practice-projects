@@ -5,14 +5,14 @@ import UpdateItem from '../components/UpdateItem'
 
 // ----------------------------------------------------------------------------
 
-const Update = ({ query }) => (
+const UpdatePage = ({ query }) => (
   <div>
     <UpdateItem id={query ? query.id : undefined} />
   </div>
 )
 
-Update.propTypes = {
+UpdatePage.propTypes = {
   query: PropTypes.object,
 }
 
-export default Update
+export default UpdatePage
