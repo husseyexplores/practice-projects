@@ -5,12 +5,14 @@ import gql from 'graphql-tag'
 import styled from 'styled-components'
 
 import Item from './Item'
+import Pagination from './Pagination'
+import { perPage } from '../config'
 
 // ----------------------------------------------------------------------------
 
 const ALL_ITEMS_QUERY = gql`
-  query ALL_ITEMS_QUERY {
-    items {
+  query ALL_ITEMS_QUERY($skip: Int = 0, $first: Int = ${perPage}) {
+    items(first: $first, skip: $skip, orderBy: createdAt_DESC) {
       id
       title
       price
@@ -35,10 +37,15 @@ const ItemsList = styled.div`
 
 class Items extends Component {
   render() {
+    const { page } = this.props
+
     return (
       <Centered>
-        Items
-        <Query query={ALL_ITEMS_QUERY}>
+        <Pagination page={page} />
+        <Query
+          query={ALL_ITEMS_QUERY}
+          variables={{ skip: page * perPage - perPage }}
+        >
           {({ data, loading, error }) => {
             if (loading) {
               return <p>Loading...</p>
@@ -54,19 +61,27 @@ class Items extends Component {
 
             return (
               <ItemsList>
-                {data.items.map(item => (
-                  <Item key={item.id} item={item} />
-                ))}
+                {data.items.length > 0 &&
+                  data.items.map(item => <Item key={item.id} item={item} />)}
+
+                {/* no items message */}
+                {data.items.length < 1 && page === 1 && <p>No items found</p>}
+                {data.items.length < 1 && page > 1 && (
+                  <p>No items found on page {page}</p>
+                )}
               </ItemsList>
             )
           }}
         </Query>
+        <Pagination page={page} />
       </Centered>
     )
   }
 }
 
-Items.propTypes = {}
+Items.propTypes = {
+  page: PropTypes.number.isRequired,
+}
 
 Items.defaultProps = {}
 
