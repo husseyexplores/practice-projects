@@ -12,9 +12,13 @@ server.express.use(cookieParser())
 server.express.use((req, res, next) => {
   const { token } = req.cookies
   if (token) {
-    const { userId } = jwt.verify(token, process.env.APP_SECRET)
-    // put the userId  onto the req for further middlewares
-    req.userId = userId
+    try {
+      const { userId } = jwt.verify(token, process.env.APP_SECRET)
+      // put the userId  onto the req for further middlewares
+      req.userId = userId
+    } catch (err) {
+      // eslint-disable-line no-empty
+    }
   }
   next()
 })

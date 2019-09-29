@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 import Signup from '../components/Signup'
+import Signin from '../components/Signin'
+import RequestReset from '../components/RequestReset'
 
 // ----------------------------------------------------------------------------
 
@@ -16,8 +18,8 @@ function SignupPage() {
   return (
     <Columns>
       <Signup />
-      <Signup />
-      <Signup />
+      <Signin />
+      <RequestReset />
     </Columns>
   )
 }

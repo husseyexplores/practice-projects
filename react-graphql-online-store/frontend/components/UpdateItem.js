@@ -42,6 +42,7 @@ const UPDATE_ITEM_MUTATION = gql`
     }
   }
 `
+
 class UpdateItem extends Component {
   /* eslint-disable react/no-unused-state */
   state = {}
@@ -49,6 +50,12 @@ class UpdateItem extends Component {
   handleChange = ({ target: { value, name, type } }) => {
     const val = type === 'number' ? parseFloat(value) : value
     this.setState({ [name]: val })
+  }
+
+  handleQueryComplete = data => {
+    if (data && data.item) {
+      this.setState({ ...data.item })
+    }
   }
 
   render() {
@@ -59,7 +66,11 @@ class UpdateItem extends Component {
     }
 
     return (
-      <Query query={SINGLE_ITEM_QUERY} variables={{ id: this.props.id }}>
+      <Query
+        query={SINGLE_ITEM_QUERY}
+        variables={{ id: this.props.id }}
+        onCompleted={this.handleQueryComplete}
+      >
         {({ data, loading: queryLoading, error: queryErr }) => {
           if (queryErr) {
             return <ErrorMessage error={queryErr} />
@@ -81,7 +92,7 @@ class UpdateItem extends Component {
 
                     // Call the mutation
                     const changes = { ...this.state }
-                    const response = await updateItem({
+                    await updateItem({
                       variables: { id: this.props.id, ...changes },
                     })
                   }}
@@ -99,7 +110,7 @@ class UpdateItem extends Component {
                         name="title"
                         placeholder="Title"
                         required
-                        value={queryLoading ? '' : title || data.item.title}
+                        value={queryLoading ? '' : title || ''}
                         onChange={this.handleChange}
                       />
                     </label>
@@ -112,7 +123,7 @@ class UpdateItem extends Component {
                         name="price"
                         placeholder="Price"
                         required
-                        value={queryLoading ? '' : price || data.item.price}
+                        value={queryLoading ? '' : price || ''}
                         min="0"
                         onChange={this.handleChange}
                       />
@@ -125,11 +136,7 @@ class UpdateItem extends Component {
                         name="description"
                         placeholder="Enter A Description"
                         required
-                        value={
-                          queryLoading
-                            ? ''
-                            : description || data.item.description
-                        }
+                        value={queryLoading ? '' : description || ''}
                         onChange={this.handleChange}
                       />
                     </label>

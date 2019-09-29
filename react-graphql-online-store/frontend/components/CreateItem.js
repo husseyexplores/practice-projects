@@ -146,7 +146,7 @@ class CreateItem extends Component {
                   name="price"
                   placeholder="Price"
                   required
-                  value={price}
+                  value={price || ''}
                   min="0"
                   onChange={this.handleChange}
                 />

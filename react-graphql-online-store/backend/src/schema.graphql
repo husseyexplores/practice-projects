@@ -1,12 +1,23 @@
 # import * from './generated/prisma.graphql'
 
 # Custom Types
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  permissions: [Permission!]!
+}
+
 input ItemInput {
   title: String!
   description: String!
   price: Int!
   image: String
   largeImage: String
+}
+
+type SuccessMessage {
+  message: String!
 }
 
 # Mutations
@@ -17,6 +28,10 @@ type Mutation {
   updateItem(id: ID!, title: String, description: String, price: Int): Item!
   deleteItem(where: ItemWhereUniqueInput!): Item
   signup(email: String!, password: String!, name: String!): User!
+  signin(email: String!, password: String!): User!
+  signout: SuccessMessage!
+  requestReset(email: String!): SuccessMessage!
+  resetPassword(email: String!, resetToken: String!, password: String!, confirmPassword: String!): User!
 }
 
 #Queries

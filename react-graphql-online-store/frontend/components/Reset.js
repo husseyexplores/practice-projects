@@ -10,13 +10,19 @@ import { CURRENT_USER_QUERY } from './User'
 
 // ----------------------------------------------------------------------------
 
-const SIGNUP_MUTATION = gql`
-  mutation SIGNUP_MUTATION(
+const RESET_PASSWORD_MUTATION = gql`
+  mutation RESET_PASSWORD_MUTATION(
     $email: String!
-    $name: String!
+    $resetToken: String!
     $password: String!
+    $confirmPassword: String!
   ) {
-    signup(email: $email, name: $name, password: $password) {
+    resetPassword(
+      email: $email
+      resetToken: $resetToken
+      password: $password
+      confirmPassword: $confirmPassword
+    ) {
       id
       name
       email
@@ -24,11 +30,10 @@ const SIGNUP_MUTATION = gql`
   }
 `
 
-class Signup extends Component {
+class Reset extends Component {
   state = {
-    email: '',
-    name: '',
     password: '',
+    confirmPassword: '',
   }
 
   handleChange = ({ target: { value, name } }) => {
@@ -36,54 +41,33 @@ class Signup extends Component {
   }
 
   render() {
-    const { email, name, password } = this.state
+    const { confirmPassword, password } = this.state
 
     return (
       <Mutation
-        mutation={SIGNUP_MUTATION}
+        mutation={RESET_PASSWORD_MUTATION}
         refetchQueries={[
           {
             query: CURRENT_USER_QUERY,
           },
         ]}
       >
-        {(signupMutation, { loading, error }) => (
+        {(restPasswordMutation, { loading, error }) => (
           <Form
             method="POST"
             onSubmit={async e => {
               e.preventDefault()
-              await signupMutation({ variables: { ...this.state } })
+              const { email, resetToken } = this.props
+              await restPasswordMutation({
+                variables: { ...this.state, email, resetToken },
+              })
               Router.push({ pathname: '/' })
             }}
           >
             <fieldset disabled={loading} aria-busy={loading}>
-              <h2>Sign Up for An Account</h2>
+              <h2>Set a new password</h2>
 
               <ErrorMessage error={error} />
-              <label htmlFor="email">
-                Email
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Enter Your E-mail"
-                  required
-                  value={email}
-                  onChange={this.handleChange}
-                />
-              </label>
-              <label htmlFor="name">
-                Name
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="Enter Your Name"
-                  required
-                  value={name}
-                  onChange={this.handleChange}
-                />
-              </label>
               <label htmlFor="password">
                 Password
                 <input
@@ -96,8 +80,20 @@ class Signup extends Component {
                   onChange={this.handleChange}
                 />
               </label>
+              <label htmlFor="password">
+                Confirm Password
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="Enter A Password"
+                  required
+                  value={confirmPassword}
+                  onChange={this.handleChange}
+                />
+              </label>
 
-              <button type="submit">Sign Up!</button>
+              <button type="submit">Save New Password</button>
             </fieldset>
           </Form>
         )}
@@ -106,8 +102,11 @@ class Signup extends Component {
   }
 }
 
-Signup.propTypes = {}
+Reset.propTypes = {
+  email: PropTypes.string.isRequired,
+  resetToken: PropTypes.string.isRequired,
+}
 
-Signup.defaultProps = {}
+Reset.defaultProps = {}
 
-export default Signup
+export default Reset
