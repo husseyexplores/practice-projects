@@ -48,7 +48,7 @@ class Signin extends Component {
             onSubmit={async e => {
               e.preventDefault()
               await signinMutation({ variables: { ...this.state } })
-              Router.push({ pathname: '/' })
+              Router.push(this.props.redirectPath)
             }}
           >
             <fieldset disabled={loading} aria-busy={loading}>
@@ -89,8 +89,12 @@ class Signin extends Component {
   }
 }
 
-Signin.propTypes = {}
+Signin.propTypes = {
+  redirectPath: PropTypes.string,
+}
 
-Signin.defaultProps = {}
+Signin.defaultProps = {
+  redirectPath: '/',
+}
 
 export default Signin

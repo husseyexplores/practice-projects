@@ -2,12 +2,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import CreateItem from '../components/CreateItem'
+import PleaseSignIn from '../components/PleaseSignIn'
 
 // ----------------------------------------------------------------------------
 
 const SellPage = () => (
   <div>
-    <CreateItem />
+    <PleaseSignIn>
+      <CreateItem />
+    </PleaseSignIn>
   </div>
 )
 
