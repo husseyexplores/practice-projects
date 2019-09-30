@@ -3,20 +3,25 @@ const sgTransport = require('nodemailer-sendgrid-transport')
 
 // ----------------------------------------------------------------------------
 
-function hasPermission(user, permissionsNeeded) {
+function hasPermission(user, permissionsNeeded, debugError = false) {
   const matchedPermissions = user.permissions.filter(permissionTheyHave =>
     permissionsNeeded.includes(permissionTheyHave)
   )
   if (!matchedPermissions.length) {
-    throw new Error(`You do not have sufficient permissions
+    if (debugError) {
+      throw new Error(`You do not have sufficient permissions
 
-      : ${permissionsNeeded}
+        : ${permissionsNeeded}
 
-      You Have:
+        You Have:
 
-      ${user.permissions}
-      `)
+        ${user.permissions}
+        `)
+    } else {
+      throw new Error('Insufficient permissions.')
+    }
   }
+  return true
 }
 
 const transportOptions = {

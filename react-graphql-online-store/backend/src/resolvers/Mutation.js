@@ -1,3 +1,4 @@
+const { forwardTo } = require('prisma-binding')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
@@ -6,7 +7,7 @@ const {
   deleteCloudinaryImage,
   getCloudinaryPublicIdFromUrl,
 } = require('../cloudinary')
-const { mailer } = require('../utils')
+const { mailer, hasPermission } = require('../utils')
 
 const randomBytes = promisify(crypto.randomBytes)
 const handleize = str =>
@@ -64,12 +65,24 @@ const Mutations = {
   },
 
   async deleteItem(parent, args, ctx, info) {
+    const { user } = ctx.request
     const { where } = args
 
     // 1. Find the item
-    const item = await ctx.db.query.item({ where }, `{ id title image }`)
+    const item = await ctx.db.query.item(
+      { where },
+      `{ id title image user { id } }`
+    )
 
-    // TODO 2. Check if they have permission to delete it
+    // 2. Check if they have permission to delete it
+    const ownsItem = item.user.id === user.id
+    const hasPermissions = user.permissions.some(
+      p => p === 'ADMIN' || p === 'ITEMDELETE'
+    )
+
+    if (!ownsItem && !hasPermissions) {
+      throw new Error('Insufficient permissions.')
+    }
 
     // 4. Delete the image from the cloudinary - don't wait for the response.
     const isCloudinaryImg = item.image.toLowerCase().includes('cloudinary')
@@ -262,6 +275,64 @@ const Mutations = {
 
     // 8. return the new user
     return updatedUser
+  },
+
+  async updateUser(parent, args, ctx, info) {
+    // 1. Check if they are logged in
+    const { userId, user } = ctx.request
+
+    if (!userId) {
+      throw new Error('You must be logged in to perform this operation.')
+    }
+
+    const userToBeUpdated = await ctx.db.query.user(
+      { where: args.where },
+      `{ id permissions email }`
+    )
+
+    let isAdmin = false
+    let canUpdatePermissions = false
+    try {
+      isAdmin = hasPermission(user, ['ADMIN'])
+      canUpdatePermissions = hasPermission(user, ['PERMISSIONUPDATE'])
+    } catch (err) {
+      isAdmin = false
+    }
+
+    // 2. If they are only updating permissions, make sure they have sufficient permissions (They can update ANY user's permissions (except Admin's) )
+    const onlyUpdatingPermissions =
+      Object.keys(args.data).length === 1 && !!args.data.permissions
+    if (onlyUpdatingPermissions) {
+      // Make sure they are not updating the admin IF they are also not admin
+      if (userToBeUpdated.permissions.includes('ADMIN')) {
+        // Update the permissions
+        if (isAdmin) {
+          return forwardTo('db')(parent, args, ctx, info)
+        }
+      } else {
+        // They user they are updting is not ADMIN & they also have permissions to update the user, then let them do so
+        return forwardTo('db')(parent, args, ctx, info)
+      }
+    }
+
+    // 3. They are updating not only permissions but also other data
+    // Make sure they only update their own profile UNLESS they are ADMIN
+    // (Admins can update all the users)
+    const uniqueId = args.where.email || args.where.id
+    const isUpdatingSelf = uniqueId === user.id || uniqueId === user.email
+    if (!isUpdatingSelf && !isAdmin) {
+      // Provide vague error for security concerns
+      throw new Error('You are not authorized to perform this operation.')
+    }
+
+    // 3. If updating permissions, check if they actually have permissions to update the permission
+    if (args.data.permissions && (!isAdmin || !canUpdatePermissions)) {
+      // this will throw the error if the permission are not sufficient
+      throw new Error('Insufficient permissions.')
+    }
+
+    // 4. Update the user in the database
+    return forwardTo('db')(parent, args, ctx, info)
   },
 }
 

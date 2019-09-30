@@ -49,7 +49,9 @@ class DeleteItem extends Component {
               if (
                 window.confirm('Are you sure you want to delete this item?')
               ) {
-                deleteItem()
+                deleteItem().catch(e =>
+                  alert(e.message.replace('GraphQL error: ', ''))
+                )
               }
             }}
           >
