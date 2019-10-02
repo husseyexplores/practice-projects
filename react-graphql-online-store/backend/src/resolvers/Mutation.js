@@ -7,7 +7,7 @@ const {
   deleteCloudinaryImage,
   getCloudinaryPublicIdFromUrl,
 } = require('../cloudinary')
-const { mailer, hasPermission } = require('../utils')
+const { mailer, hasPermission, isAuthorized } = require('../utils')
 
 const randomBytes = promisify(crypto.randomBytes)
 const handleize = str =>
@@ -334,6 +334,31 @@ const Mutations = {
     // 4. Update the user in the database
     return forwardTo('db')(parent, args, ctx, info)
   },
+  addToCart: isAuthorized(async (parent, args, ctx) => {
+    // 1. Query the user's current cart
+    const { userId } = ctx.request
+
+    // 2. Check if the item is already in the cart
+    const [existingCartItem] = await ctx.db.query.cartItems({
+      where: { user: { id: userId }, item: { id: args.id } },
+    })
+    // 3. If the item is in the cart, increment the quantity.
+    if (existingCartItem) {
+      const updatedQty = existingCartItem.quantity + (args.quantity || 1)
+      return ctx.db.mutation.updateCartItem({
+        where: { id: existingCartItem.id },
+        data: { quantity: updatedQty },
+      })
+    }
+
+    // otherwise add it to cart with the given quantity (default quantity: 1)
+    return ctx.db.mutation.createCartItem({
+      data: {
+        user: { connect: { id: userId } },
+        item: { connect: { id: args.id } },
+      },
+    })
+  }),
 }
 
 module.exports = Mutations
