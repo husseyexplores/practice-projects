@@ -29,6 +29,18 @@ const transportOptions = {
     api_key: process.env.SENDGRID_API_KEY,
   },
 }
+
+const isAuthorized = callback => (parent, args, ctx, ...restArgs) => {
+  // `userId` & `user` should have been added by our middleware if the user is signedin
+  const notSignedIn = !ctx.request.userId || !ctx.request.user
+  if (notSignedIn) {
+    throw new Error('You must be logged in to perform this operation.')
+  }
+
+  return callback(parent, args, ctx, ...restArgs)
+}
+
 exports.mailer = createTransport(sgTransport(transportOptions))
 
 exports.hasPermission = hasPermission
+exports.isAuthorized = isAuthorized
