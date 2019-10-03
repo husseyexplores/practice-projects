@@ -12,14 +12,39 @@ const CURRENT_USER_QUERY = gql`
       email
       name
       permissions
+      cart {
+        id
+        quantity
+        item {
+          id
+          title
+          price
+          image
+          title
+        }
+      }
     }
   }
 `
 
-function User({ children, ...restProps }) {
+function User({ children, ...restUserQueryProps }) {
   return (
-    <Query query={CURRENT_USER_QUERY} {...restProps}>
-      {children}
+    <Query query={CURRENT_USER_QUERY} {...restUserQueryProps}>
+      {({ data, loading, ...rest }, ...restArgs) => {
+        const anonymousUser = !loading && (!data || !data.me)
+        const signedInUser = !loading && data && data.me
+
+        return children(
+          {
+            data,
+            loading,
+            ...rest,
+            anonymousUser,
+            signedInUser,
+          },
+          ...restArgs
+        )
+      }}
     </Query>
   )
 }

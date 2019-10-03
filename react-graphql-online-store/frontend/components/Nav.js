@@ -1,22 +1,23 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Link from 'next/link'
+import { Mutation } from 'react-apollo'
 
 import User from './User'
 import SignoutButton from './Signout'
 import NavStyles from './styles/NavStyles'
+
+import { TOGGLE_CART_MUTATION } from './Cart'
 
 // ----------------------------------------------------------------------------
 
 function Nav() {
   return (
     <User>
-      {({ data, loading }) => {
+      {({ loading, anonymousUser, signedInUser }) => {
         if (loading) {
           return null
         }
-        const anonymousUser = !loading && (!data || !data.me)
-        const signedInUser = !loading && data && data.me
 
         return (
           <NavStyles>
@@ -34,6 +35,14 @@ function Nav() {
                 <Link href="/me">
                   <a>Account</a>
                 </Link>
+                <SignoutButton />
+                <Mutation mutation={TOGGLE_CART_MUTATION}>
+                  {toggleCart => (
+                    <button type="button" onClick={toggleCart}>
+                      My Cart
+                    </button>
+                  )}
+                </Mutation>
               </>
             )}
             {anonymousUser && (
@@ -41,7 +50,6 @@ function Nav() {
                 <a>SignIn</a>
               </Link>
             )}
-            {signedInUser && <SignoutButton />}
           </NavStyles>
         )
       }}

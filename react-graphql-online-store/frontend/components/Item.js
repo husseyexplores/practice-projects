@@ -6,6 +6,7 @@ import Title from './styles/Title'
 import ItemStyles from './styles/ItemStyles'
 import PriceTag from './styles/PriceTag'
 import DeleteItemButton from './DeleteItemButton'
+import AddToCartButton from './AddToCartButton'
 
 import formatMoney from '../lib/formatMoney'
 
@@ -29,7 +30,7 @@ class Item extends Component {
           <Link href={{ pathname: '/update', query: { id: item.id } }}>
             <a>Edit</a>
           </Link>
-          <button type="button">Add To Cart</button>
+          <AddToCartButton id={item.id}>Add To Cart</AddToCartButton>
           <DeleteItemButton id={item.id}>Delete</DeleteItemButton>
         </div>
       </ItemStyles>
