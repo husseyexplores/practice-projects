@@ -334,7 +334,14 @@ const Mutations = {
     // 4. Update the user in the database
     return forwardTo('db')(parent, args, ctx, info)
   },
+
   addToCart: isAuthorized(async (parent, args, ctx) => {
+    const quantity = args.quantity || 1
+    // 0. Basic sanity checks
+    if (quantity && quantity < 1) {
+      throw new Error('Quantity must be a positive integer.')
+    }
+
     // 1. Query the user's current cart
     const { userId } = ctx.request
 
@@ -342,9 +349,10 @@ const Mutations = {
     const [existingCartItem] = await ctx.db.query.cartItems({
       where: { user: { id: userId }, item: { id: args.id } },
     })
+
     // 3. If the item is in the cart, increment the quantity.
     if (existingCartItem) {
-      const updatedQty = existingCartItem.quantity + (args.quantity || 1)
+      const updatedQty = existingCartItem.quantity + quantity
       return ctx.db.mutation.updateCartItem({
         where: { id: existingCartItem.id },
         data: { quantity: updatedQty },
@@ -354,10 +362,83 @@ const Mutations = {
     // otherwise add it to cart with the given quantity (default quantity: 1)
     return ctx.db.mutation.createCartItem({
       data: {
+        quantity,
         user: { connect: { id: userId } },
         item: { connect: { id: args.id } },
       },
     })
+  }),
+
+  removeFromCart: isAuthorized(async (parent, args, ctx, info) => {
+    // 1. Find the cart item
+    const { userId } = ctx.request
+    const cartItem = await ctx.db.query.cartItem(
+      {
+        where: { id: args.id },
+      },
+      `{ id, user { id } }`
+    )
+
+    // 2. Make sure that item exists and they own that cart item
+    if (!cartItem || userId !== cartItem.user.id) {
+      throw new Error(`No item found with id ${args.id}.`)
+    }
+
+    // 3. Delete the item and return the deleted item
+    return ctx.db.mutation.deleteCartItem(
+      {
+        where: { id: args.id },
+      },
+      info
+    )
+  }),
+
+  updateCartItemQuantity: isAuthorized(async (parent, args, ctx, info) => {
+    // 0. Basic sanity checks
+    if (args.quantity < 0) {
+      // Quantity zero is allowed (zero means delete the item from cart)
+      throw new Error('Quantity must be zero or a positive integer.')
+    }
+
+    // 1. Find the cart item
+    const { userId } = ctx.request
+    const cartItem = await ctx.db.query.cartItem(
+      {
+        where: { id: args.id },
+      },
+      `{ id, user { id } }`
+    )
+
+    // 2. Make sure that the item exists and they own that cart item
+    if (!cartItem || userId !== cartItem.user.id) {
+      throw new Error(`No item found with id ${args.id}`)
+    }
+
+    // 3. Update the quantity or delete the item and return the item
+    if (args.quantity === 0) {
+      // If the quantity is zero, delete the item from the cart
+      const deletedItem = await ctx.db.mutation.deleteCartItem(
+        {
+          where: { id: args.id },
+        },
+        info
+      )
+      // Update the quantity manually before sending the response.
+      // (Otherwise, the item would contain the original quantity)
+      if (deletedItem.quantity) {
+        deletedItem.quantity = 0
+      }
+      return deletedItem
+    }
+
+    // Otherwise, update the quantity
+    return ctx.db.mutation.updateCartItem(
+      {
+        where: { id: args.id },
+        data: { quantity: args.quantity },
+      },
+      info
+    )
   }),
 }
 

@@ -35,6 +35,8 @@ type Mutation {
   resetPassword(email: String!, resetToken: String!, password: String!, confirmPassword: String!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   addToCart(id: ID!, quantity: Int!): CartItem!
+  removeFromCart(id: ID!): CartItem!
+  updateCartItemQuantity(id: ID!, quantity: Int!): CartItem!
 }
 
 #Queries
