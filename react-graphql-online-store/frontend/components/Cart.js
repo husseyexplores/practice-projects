@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import gql from 'graphql-tag'
+import { adopt } from 'react-adopt'
 import { Query, Mutation } from 'react-apollo'
 
 import User from './User'
@@ -26,52 +27,56 @@ const TOGGLE_CART_MUTATION = gql`
   }
 `
 
+/* eslint-disable react/display-name, react/prop-types */
+const ComposedRenderProps = adopt({
+  user: ({ render }) => <User>{render}</User>,
+  toggleCart: ({ render }) => (
+    <Mutation mutation={TOGGLE_CART_MUTATION}>{render}</Mutation>
+  ),
+  localCache: ({ render }) => <Query query={LOCAL_STATE_QUERY}>{render}</Query>,
+})
+/* eslint-enable react/display-name */
+
 function Cart() {
   return (
-    <User>
-      {({ loading, anonymousUser, signedInUser }) => {
+    <ComposedRenderProps>
+      {({ user, toggleCart, localCache }) => {
+        const { loading, anonymousUser, signedInUser } = user
+        const { data } = localCache
+
         if (loading || anonymousUser) {
           return null
         }
         const { cart } = signedInUser
         const itemsInCart = cart.length
         const cartTotal = calcTotalPrice(cart)
-
         return (
-          <Mutation mutation={TOGGLE_CART_MUTATION}>
-            {toggleCart => (
-              <Query query={LOCAL_STATE_QUERY}>
-                {({ data }) => (
-                  <CartStyles open={data.cartOpen}>
-                    <header>
-                      <CloseButton title="close" onClick={toggleCart}>
-                        &times;
-                      </CloseButton>
-                      <Supreme>Your Cart</Supreme>
-                      <p>
-                        You have {itemsInCart} item
-                        {itemsInCart === 1 ? '' : 's'} in your cart.
-                      </p>
-                    </header>
+          <CartStyles open={data.cartOpen}>
+            <header>
+              <CloseButton title="close" onClick={toggleCart}>
+                &times;
+              </CloseButton>
+              <Supreme>Your Cart</Supreme>
+              <p>
+                You have {itemsInCart} item
+                {itemsInCart === 1 ? '' : 's'} in your cart.
+              </p>
+            </header>
 
-                    <ul>
-                      {cart.map(cartItem => (
-                        <CartItem key={cartItem.id} cartItem={cartItem} />
-                      ))}
-                    </ul>
+            <ul>
+              {cart.map(cartItem => (
+                <CartItem key={cartItem.id} cartItem={cartItem} />
+              ))}
+            </ul>
 
-                    <footer>
-                      <p>{formatMoney(cartTotal)}</p>
-                      <SickButton>Checkout</SickButton>
-                    </footer>
-                  </CartStyles>
-                )}
-              </Query>
-            )}
-          </Mutation>
+            <footer>
+              <p>{formatMoney(cartTotal)}</p>
+              <SickButton>Checkout</SickButton>
+            </footer>
+          </CartStyles>
         )
       }}
-    </User>
+    </ComposedRenderProps>
   )
 }
 
