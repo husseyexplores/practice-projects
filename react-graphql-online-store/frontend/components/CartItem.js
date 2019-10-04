@@ -25,11 +25,18 @@ const CartItemStyles = styled.li`
 `
 
 function CartItem({ cartItem }) {
-  const {
-    id,
-    quantity,
-    item: { title, price, image },
-  } = cartItem
+  const { id, quantity, item } = cartItem
+
+  if (!item) {
+    return (
+      <CartItemStyles>
+        <p>Item has been deleted.</p>
+        <RemoveFromCart id={id} />
+      </CartItemStyles>
+    )
+  }
+
+  const { title, price, image } = item
   const formattedPrice = formatMoney(price)
   const formattedTotalPrice = formatMoney(price * quantity)
   return (
