@@ -19,10 +19,11 @@ function Nav() {
         if (loading) {
           return null
         }
-        const cartItemsCount = signedInUser.cart.reduce(
-          (sum, item) => sum + item.quantity,
-          0
-        )
+
+        const cartItemsCount = signedInUser
+          ? signedInUser.cart.reduce((sum, item) => sum + item.quantity, 0)
+          : 0
+
         return (
           <NavStyles>
             <Link href="/items">
