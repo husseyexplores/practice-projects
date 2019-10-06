@@ -37,6 +37,7 @@ type Mutation {
   addToCart(id: ID!, quantity: Int!): CartItem!
   removeFromCart(id: ID!): CartItem!
   updateCartItemQuantity(id: ID!, quantity: Int!): CartItem!
+  createOrder(token: String!): Order!
 }
 
 #Queries
@@ -46,4 +47,5 @@ type Query {
   itemsConnection(where: ItemWhereInput): ItemConnection!
   me: User
   users: [User!]!
+  order(id: ID!): Order
 }

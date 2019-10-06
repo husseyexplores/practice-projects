@@ -20,7 +20,7 @@ const CountAnimationStyles = styled.span`
   /* Entered dot. TO: normal */
   .count-enter-active {
     transform: rotateX(0);
-    transition: all 5000ms;
+    transition: all 500ms;
   }
 
   /* Exited dot. FROM: normal  */
@@ -32,7 +32,7 @@ const CountAnimationStyles = styled.span`
   /* Exited dot. TO: Flipped  */
   .count-exit-active {
     transform: rotateX(0.5turn);
-    transition: all 5000ms;
+    transition: all 500ms;
   }
 `
 
@@ -57,7 +57,7 @@ function CartCount({ count }) {
           className="count"
           classNames="count"
           key={count}
-          timeout={5000}
+          timeout={500}
           unmountOnExit
         >
           <Dot>{count}</Dot>

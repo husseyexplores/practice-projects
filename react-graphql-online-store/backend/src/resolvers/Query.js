@@ -1,5 +1,5 @@
 const { forwardTo } = require('prisma-binding')
-const { hasPermission } = require('../utils')
+const { hasPermission, isAuthorized } = require('../utils')
 
 const Query = {
   items: forwardTo('db'),
@@ -26,6 +26,42 @@ const Query = {
 
     return ctx.db.query.users({}, info)
   },
+  order: isAuthorized(async (parent, args, ctx, info) => {
+    const { user, userId } = ctx.request
+
+    // 1. Query the order
+    const order = await ctx.db.query.order(
+      { where: { id: args.id } },
+      `{
+        id
+        charge
+        total
+        createdAt
+        user {
+          id
+        }
+        items {
+          id
+          title
+          description
+          price
+          image
+          quantity
+        }
+      }`
+    )
+
+    // 2. Make sure it belongs to them or has permission
+    const ownsOrder = order.user.id === userId
+    const hasPermissionToSeeOrder = user.permissions.includes('ADMIN')
+
+    if (!ownsOrder && !hasPermissionToSeeOrder) {
+      throw new Error('Insufficient permissions')
+    }
+
+    // 3. Return the order
+    return order
+  }),
 }
 
 module.exports = Query
