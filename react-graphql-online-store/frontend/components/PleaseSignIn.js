@@ -28,7 +28,9 @@ function PleaseSignIn({ children }) {
             </div>
           )
         }
-        return children
+
+        // Optional render prop
+        return typeof children === 'function' ? children(data.me) : children
       }}
     </Query>
   )
