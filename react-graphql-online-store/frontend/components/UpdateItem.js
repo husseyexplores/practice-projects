@@ -62,7 +62,8 @@ class UpdateItem extends Component {
     const { title, description, price } = this.state
 
     if (!this.props.id) {
-      return <ErrorMessage error="Item ID is missing" />
+      const error = new Error('Item ID is missing')
+      return <ErrorMessage error={error} />
     }
 
     return (
