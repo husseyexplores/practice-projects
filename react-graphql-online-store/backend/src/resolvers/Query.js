@@ -26,7 +26,7 @@ const Query = {
 
     return ctx.db.query.users({}, info)
   },
-  order: isAuthorized(async (parent, args, ctx, info) => {
+  order: isAuthorized(async (parent, args, ctx) => {
     const { user, userId } = ctx.request
 
     // 1. Query the order
@@ -61,6 +61,18 @@ const Query = {
 
     // 3. Return the order
     return order
+  }),
+  orders: isAuthorized(async (parent, args, ctx, info) => {
+    const { userId } = ctx.request
+
+    // 1. Query the orders that belong to them
+    const orders = await ctx.db.query.orders(
+      { where: { user: { id: userId } }, orderBy: 'createdAt_DESC' },
+      info
+    )
+
+    // 3. Return the orders
+    return orders
   }),
 }
 
