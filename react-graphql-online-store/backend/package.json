@@ -19,7 +19,7 @@
     "graphql-yoga": "1.18.3",
     "jsonwebtoken": "8.5.1",
     "lodash": "^4.17.15",
-    "nodemailer": "^6.3.0",
+    "nodemailer": "^6.4.16",
     "nodemailer-sendgrid-transport": "^0.2.0",
     "nodemon": "^1.19.2",
     "npm-run-all": "^4.1.5",
